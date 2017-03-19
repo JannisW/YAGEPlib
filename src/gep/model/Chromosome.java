@@ -20,9 +20,10 @@ public class Chromosome {
 		
 		int i = 0;
 		while(i < staticLinkingFunction.sequence.length) {			
-			staticLinkingFunction.sequence[i].
+			//staticLinkingFunction.sequence[i].
 		}
-		//genes[0].sequence[0].
+		
+		return null; // TODO implement that
 	}
 
 }
