@@ -16,6 +16,13 @@ public class DefaultRandomEngine extends Random implements RandomEngine {
 	 */
 	private static final long serialVersionUID = -7574675804698581874L;
 
+	public DefaultRandomEngine() {
+	}
+
+	public DefaultRandomEngine(long seed) {
+		super(seed);
+	}
+
 	/**
 	 * Decides if a function (true) or a terminal (false) should be generated.
 	 * The probability is uniformly distributed so both functions and terminals
