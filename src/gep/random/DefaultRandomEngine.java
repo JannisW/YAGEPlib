@@ -5,12 +5,16 @@ import java.util.Random;
 
 import gep.model.GeneElement;
 
-public class DefaultRandomEngine implements RandomEngine {
+/**
+ * An implementation of the RandomEngine interface by using Java's default
+ * random generator.
+ */
+public class DefaultRandomEngine extends Random implements RandomEngine {
 
 	/**
-	 * Java's default random generator
+	 * The serial version UID.
 	 */
-	private Random r;
+	private static final long serialVersionUID = -7574675804698581874L;
 
 	/**
 	 * Decides if a function (true) or a terminal (false) should be generated.
@@ -22,7 +26,7 @@ public class DefaultRandomEngine implements RandomEngine {
 	 */
 	@Override
 	public boolean decideTakeFunction() {
-		return r.nextBoolean();
+		return super.nextBoolean();
 	}
 
 	/**
@@ -34,17 +38,17 @@ public class DefaultRandomEngine implements RandomEngine {
 	 * @return The randomly picked element
 	 */
 	public <T extends GeneElement<?>> T pickElement(ArrayList<T> elements) {
-		return elements.get(r.nextInt(elements.size()));
+		return elements.get(super.nextInt(elements.size()));
 	}
 
 	@Override
 	public boolean decideBinaryDecision(double probabilityYes) {
-		return r.nextDouble() < probabilityYes;
+		return super.nextDouble() < probabilityYes;
 	}
 
 	@Override
 	public boolean decideBinaryDecision() {
-		return r.nextBoolean();
+		return super.nextBoolean();
 	}
 
 }
