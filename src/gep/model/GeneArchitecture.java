@@ -30,7 +30,8 @@ public class GeneArchitecture<T> {
 	 * @return The length of the corresponding gene
 	 */
 	public int getGeneLength() {
-		return this.headLength * (maxArity - 1) + 1;
+		// headLength + tailLength (tailLength == headLength * (maxArity - 1) + 1)
+		return this.headLength * maxArity + 1; 
 	}
 
 	public Gene<T> createRandomGene(RandomEngine r) {
