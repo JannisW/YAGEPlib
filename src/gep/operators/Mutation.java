@@ -2,7 +2,6 @@ package gep.operators;
 
 import gep.model.Chromosome;
 import gep.model.Gene;
-import gep.model.GeneElement;
 import gep.model.Individual;
 import gep.random.DefaultRandomEngine;
 import gep.random.RandomEngine;

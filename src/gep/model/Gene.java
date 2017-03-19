@@ -12,6 +12,8 @@ public class Gene<T> {
 
 	public final GeneArchitecture<T> architecture;
 
+	private ExpressionTreeNode<T> expressionTreeCache = null;
+
 	// TODO check if the constructor can be protected from the outside... (worth
 	// it? as it might complicate genetic operations
 	/**
@@ -65,6 +67,10 @@ public class Gene<T> {
 	 */
 	public ExpressionTreeNode<T> express() {
 
+		if (expressionTreeCache != null) {
+			return expressionTreeCache;
+		}
+
 		Deque<ExpressionTreeNode<T>> elementQueue = new ArrayDeque<ExpressionTreeNode<T>>();
 		ExpressionTreeNode<T> etnRoot = new ExpressionTreeNode<T>(sequence[0]);
 		elementQueue.push(etnRoot);
@@ -80,7 +86,19 @@ public class Gene<T> {
 			}
 		}
 
+		expressionTreeCache = etnRoot;
 		return etnRoot;
+	}
+
+	/**
+	 * Invalidates the cache holding the latest expression tree.
+	 * 
+	 * This will make sure that the stored reference to the latest
+	 * ExpressionTree will be deleted and a new one will be created when
+	 * {@link express()} is called.
+	 */
+	public void invalidateExpressionTreeCache() {
+		expressionTreeCache = null;
 	}
 
 }

@@ -5,7 +5,7 @@ import gep.selection.SelectionMethod;
 
 public class GeneExpressionProgramming {
 
-	public static void run(Individual[] population, FitnessEnvironment fe, SelectionMethod sm,
+	public static <T> void run(Individual<T>[] population, FitnessEnvironment<T> fe, SelectionMethod sm,
 			ReproductionEnvironment re, int maxNumGenerations, double targetFitness) {
 
 		double fitnessOfBestIndividual;

@@ -3,14 +3,15 @@ package gep.model;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Individual {
+public class Individual<T> {
 
-	public final Chromosome[] chromosomes;
+	public final Chromosome<T>[] chromosomes;
 
 	private double fitness;
 
 	public Individual(int numChromosomes) {
-		this.chromosomes = new Chromosome[numChromosomes];
+		// TODO find a better solution.... These Java generics argh...
+		this.chromosomes = (Chromosome<T>[]) new Chromosome<?>[numChromosomes]; 
 	}
 
 	public double getFitness() {
@@ -22,8 +23,8 @@ public class Individual {
 								// calculate fitness directly here
 	}
 	
-	public List<ExpressionTreeNode<?>> getExpressionTrees() {
-		ArrayList<ExpressionTreeNode<?>> ets = new ArrayList<ExpressionTreeNode<?>>(chromosomes.length);
+	public List<ExpressionTreeNode<T>> getExpressionTrees() {
+		ArrayList<ExpressionTreeNode<T>> ets = new ArrayList<ExpressionTreeNode<T>>(chromosomes.length);
 		
 		for(int i = 0; i < ets.size(); i++) {
 			ets.add(chromosomes[i].express());

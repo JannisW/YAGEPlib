@@ -31,6 +31,16 @@ public class ExpressionTreeNode<T> {
 	public GeneElement<T> getNodeElement() {
 		return this.nodeElement;
 	}
+	
+	/**
+	 * Executes this expression tree by using this node as the root.
+	 * 
+	 * @return The result of the execution of the program defined by this
+	 *         expression tree.
+	 */
+	public T execute() {
+		return this.nodeElement.apply(children);
+	}
 
 	@Override
 	public String toString() {
