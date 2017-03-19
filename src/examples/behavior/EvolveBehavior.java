@@ -1,5 +1,7 @@
 package examples.behavior;
 
+import java.io.IOException;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 
 import examples.behavior.functions.InversionFunction;
@@ -11,6 +13,7 @@ import examples.behavior.terminals.StepTerminal;
 import examples.behavior.terminals.TurnLeftTerminal;
 import examples.behavior.terminals.TurnRightTerminal;
 import examples.behavior.terminals.WallInFrontCheckTerminal;
+import examples.behavior.world.WorldMap;
 import gep.GeneExpressionProgramming;
 import gep.ReproductionEnvironment;
 import gep.model.ChromosomalArchitecture;
@@ -24,13 +27,21 @@ import gep.random.DefaultRandomEngine;
 import gep.selection.RouletteWheelSelectionWithElitePreservation;
 import gep.selection.SelectionMethod;
 
-
 public class EvolveBehavior {
 
 	public static void main(String[] args) {
-		
-		// TODO actually build multiple scenarios and allow the terminals handling more then just one at a time
-		EvaluationEnvironment env = new EvaluationEnvironment(10, 10);
+
+		ArrayList<WorldMap> maps = new ArrayList<WorldMap>();
+		System.out.print("Create maps...");
+		try {
+			// TODO actually build multiple scenarios and add them
+			maps.add(new WorldMap(Paths.get("src/examples/behavior/maps/lecturemap.txt")));
+		} catch (IOException e) {
+			e.printStackTrace();
+			return;
+		}
+		System.out.println("done ( " + maps.size() + " maps created)");
+		EvaluationEnvironment env = new EvaluationEnvironment(maps);
 
 		ArrayList<GeneFunction<Boolean>> supportedBehaviorTreeNodes = new ArrayList<GeneFunction<Boolean>>(3);
 		supportedBehaviorTreeNodes.add(new SelectorFunction());
@@ -45,23 +56,24 @@ public class EvolveBehavior {
 		potentialTerminals.add(new WallInFrontCheckTerminal(env));
 		potentialTerminals.add(new FoodInFrontCheckTerminal(env));
 		potentialTerminals.add(new EmptyInFrontCheckTerminal(env));
-		
+
 		// TODO maybe create meta structure which allows more readable
 		// specification of terminals + function (which might get translated to
 		// a more efficient representation e.g. index to array of meta objects)
-		GeneArchitecture<Boolean> basicArch = new GeneArchitecture<Boolean>(16, supportedBehaviorTreeNodes, potentialTerminals);
+		GeneArchitecture<Boolean> basicArch = new GeneArchitecture<Boolean>(16, supportedBehaviorTreeNodes,
+				potentialTerminals);
 
 		ChromosomalArchitecture chromosomalArch = new ChromosomalArchitecture();
 		chromosomalArch.addBasicGene(basicArch);
 
-		Individual[] population = IndividualArchitecture.createSingleChromosomalArchitecture(chromosomalArch)
+		Individual<Boolean>[] population = IndividualArchitecture.createSingleChromosomalArchitecture(chromosomalArch)
 				.createRandomPopulation(10, new DefaultRandomEngine());
 
 		ReproductionEnvironment re = new ReproductionEnvironment();
 		re.addGeneticOperator(new Mutation(0.1));
-		
+
 		SelectionMethod sm = new RouletteWheelSelectionWithElitePreservation();
-		
+
 		GeneExpressionProgramming.run(population, env, sm, re, 10, Double.MAX_VALUE);
 	}
 

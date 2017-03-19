@@ -13,10 +13,9 @@ public class InversionFunction extends GeneFunction<Boolean> {
 
 	@Override
 	public Boolean apply(List<ExpressionTreeNode<Boolean>> expTreeChilds) {
-		
-		ExpressionTreeNode<Boolean> argument = expTreeChilds.get(0);
-		
-		return argument.getNodeElement().apply(argument.getChildren());
+
+		return !expTreeChilds.get(0).execute();
+
 	}
 
 }

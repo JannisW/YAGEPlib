@@ -1,42 +1,34 @@
 package examples.behavior;
 
+import java.util.ArrayList;
+
+import examples.behavior.world.Field;
+import examples.behavior.world.Orientation;
+import examples.behavior.world.WorldMap;
 import gep.FitnessEnvironment;
+import gep.model.ExpressionTreeNode;
 import gep.model.Individual;
 
-public class EvaluationEnvironment extends FitnessEnvironment {
+public class EvaluationEnvironment extends FitnessEnvironment<Boolean> {
+	
+	final static int MAX_NUMBER_OF_SIMULATION_TICKS = 40;
 
 	private int posAgentX;
 	private int posAgentY;
 	public Orientation agentOrientation;
 
-	// TODO change 2d array to 1d array
-	public final Field[][] grid;
+	// TODO maybe change 2d array to 1d array
+	public Field[][] grid;
 
-	public class Field {
-		private static final int WALL_MASK = 0x01;
-		private static final int FOOD_MASK = 0x02;
+	private int foodConsumed = 0;
 
-		private int properties;
+	private double currentFitnessScore = 0.0;
+	
+	// the different maps (fitness cases) for generalization
+	private final WorldMap[] maps;
 
-		public boolean isEmpty() {
-			return properties == 0;
-		}
-
-		public boolean isWall() {
-			return (properties & WALL_MASK) != 0;
-		}
-
-		public boolean isFood() {
-			return (properties & FOOD_MASK) != 0;
-		}
-	}
-
-	public enum Orientation {
-		NORTH, EAST, SOUTH, WEST;
-	}
-
-	public EvaluationEnvironment(int dimX, int dimY) {
-		this.grid = new Field[dimX][dimY];
+	public EvaluationEnvironment(ArrayList<WorldMap> maps) {
+		this.maps = maps.toArray(new WorldMap[maps.size()]);
 	}
 
 	/**
@@ -55,10 +47,17 @@ public class EvaluationEnvironment extends FitnessEnvironment {
 	 */
 	public boolean moveTo(int x, int y) {
 		if (grid[x][y].isWall()) {
+			// give penalty for actually try to move on a field with a wall.
+			currentFitnessScore--;
 			return false;
 		}
 		posAgentX = x;
 		posAgentY = y;
+		if (grid[x][y].isFood()) {
+			grid[x][y].removeFood();
+			foodConsumed++;
+			currentFitnessScore += 10;
+		}
 		return true;
 	}
 
@@ -97,16 +96,41 @@ public class EvaluationEnvironment extends FitnessEnvironment {
 		case WEST:
 			return grid[posAgentX - 1][posAgentY];
 		}
-		
+
 		return null; // never be reached
 	}
 
 	@Override
-	protected double evaluateFitness(Individual individual) {
-		// TODO Auto-generated method stub
+	protected double evaluateFitness(Individual<Boolean> individual) {
 		
-		// check if that makes sense... especially wrt. parallelization etc.
-		return 0;
+		this.currentFitnessScore = 0.0;
+		
+		for(WorldMap map : maps) {
+			
+			grid = map.initMap();
+			posAgentX = map.getStartPositionX();
+			posAgentY = map.getStartPositionY();
+			agentOrientation = map.getStartOrientation();
+		
+			// single chromosome individuals (only one program)
+			ExpressionTreeNode<Boolean> currentProgram = individual.getExpressionTrees().get(0);
+			
+			int numberOfTicks = 0;
+			while(numberOfTicks < MAX_NUMBER_OF_SIMULATION_TICKS ) { // TODO and food is left
+			
+				boolean executionResult = currentProgram.execute();
+				
+				if(!executionResult) 
+				{
+					//return currentFitnessScore-1; // TODO makes sense?
+				}
+			}
+			
+		}
+		
+		return this.currentFitnessScore;
+				
+		// TODO check if that makes sense... especially wrt. parallelization etc.
 	}
 
 }

@@ -1,7 +1,7 @@
 package examples.behavior.terminals;
 
 import examples.behavior.EvaluationEnvironment;
-import examples.behavior.EvaluationEnvironment.Orientation;
+import examples.behavior.world.Orientation;
 import gep.model.GeneTerminal;
 
 public class TurnRightTerminal extends GeneTerminal<Boolean> {
