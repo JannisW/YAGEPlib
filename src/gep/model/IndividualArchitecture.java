@@ -4,28 +4,28 @@ import java.util.ArrayList;
 
 import gep.random.RandomEngine;
 
-public class IndividualArchitecture {
+public class IndividualArchitecture<T> {
 
-	private ArrayList<ChromosomalArchitecture> chromosomeArchitecture;
+	private ArrayList<ChromosomalArchitecture<T>> chromosomeArchitecture;
 
 	public IndividualArchitecture() {
-		chromosomeArchitecture = new ArrayList<ChromosomalArchitecture>();
+		chromosomeArchitecture = new ArrayList<ChromosomalArchitecture<T>>();
 	}
 
-	public IndividualArchitecture(ArrayList<ChromosomalArchitecture> chromosomeArchitecture) {
+	public IndividualArchitecture(ArrayList<ChromosomalArchitecture<T>> chromosomeArchitecture) {
 		this.chromosomeArchitecture = chromosomeArchitecture;
 	}
 
-	public void addChromosome(ChromosomalArchitecture c) {
+	public void addChromosome(ChromosomalArchitecture<T> c) {
 		this.chromosomeArchitecture.add(c);
 	}
 
-	public Individual[] createRandomPopulation(int numIndividuals, RandomEngine r) {
+	public Individual<T>[] createRandomPopulation(int numIndividuals, RandomEngine r) {
 		if (chromosomeArchitecture.isEmpty()) {
 			throw new IllegalStateException("Cannot create individual without a chromosome");
 		}
 
-		Individual[] result = new Individual[numIndividuals];
+		Individual<T>[] result = new Individual[numIndividuals];
 		for (int i = 0; i < result.length; i++) {
 			result[i] = createRandomIndividual(r);
 		}
@@ -33,12 +33,12 @@ public class IndividualArchitecture {
 		return result;
 	}
 
-	private Individual createRandomIndividual(RandomEngine r) {
+	private Individual<T> createRandomIndividual(RandomEngine r) {
 
-		Individual individual = new Individual(chromosomeArchitecture.size());
+		Individual<T> individual = new Individual<T>(chromosomeArchitecture.size());
 
 		int idx = 0;
-		for (ChromosomalArchitecture chromoArchitecture : chromosomeArchitecture) {
+		for (ChromosomalArchitecture<T> chromoArchitecture : chromosomeArchitecture) {
 			individual.chromosomes[idx] = chromoArchitecture.createRandomChromosome(r);
 			idx++;
 		}
@@ -55,11 +55,11 @@ public class IndividualArchitecture {
 	 * @return An IndividualArchitecture, which represents an individual with a
 	 *         single chromosome.
 	 */
-	public static IndividualArchitecture createSingleChromosomalArchitecture(
-			ChromosomalArchitecture chromosomeArchitecture) {
-		ArrayList<ChromosomalArchitecture> cas = new ArrayList<ChromosomalArchitecture>(1);
+	public static <T> IndividualArchitecture<T> createSingleChromosomalArchitecture(
+			ChromosomalArchitecture<T> chromosomeArchitecture) {
+		ArrayList<ChromosomalArchitecture<T>> cas = new ArrayList<ChromosomalArchitecture<T>>(1);
 		cas.add(chromosomeArchitecture);
-		return new IndividualArchitecture(cas);
+		return new IndividualArchitecture<T>(cas);
 	}
 
 }

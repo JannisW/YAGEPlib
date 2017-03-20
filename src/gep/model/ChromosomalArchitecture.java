@@ -1,57 +1,93 @@
 package gep.model;
 
+import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Deque;
+import java.util.List;
 
 import gep.random.RandomEngine;
 
-public class ChromosomalArchitecture {
+/**
+ * 
+ * @author jannis
+ * 
+ * TODO maybe delete ChromosomalArchitecture class and move contents to Chromosome
+ *
+ * @param <T>
+ */
+public class ChromosomalArchitecture<T> {
 
-	// TODO maybe combine both fields
-	private ArrayList<GeneArchitecture> basicGenes;
-	private ArrayList<GeneArchitecture> homoeoticGenes;
+	private ArrayList<Gene<T>> genes;
+	private ArrayList<Gene<T>> immutableGenes;
+
+	private final Gene<T> rootGene;
 	
-	public ChromosomalArchitecture() {
-		basicGenes = new ArrayList<GeneArchitecture>();
-		homoeoticGenes = new ArrayList<GeneArchitecture>();
-	}
-	
-	public ChromosomalArchitecture(ArrayList<GeneArchitecture> basicGenes) {
-		this.basicGenes = basicGenes;
-		homoeoticGenes = new ArrayList<GeneArchitecture>();
-	}
-	
-	public ChromosomalArchitecture(ArrayList<GeneArchitecture> basicGenes, ArrayList<GeneArchitecture> homoeoticGenes) {
-		this.basicGenes = basicGenes;
-		this.homoeoticGenes = homoeoticGenes;
+	public ChromosomalArchitecture(Gene<T> rootGene) {
+		this.genes = new ArrayList<Gene<T>>();
+		this.immutableGenes = new ArrayList<Gene<T>>();
+		this.rootGene = rootGene;
 	}
 
-	public Chromosome createRandomChromosome(RandomEngine r) {
+	public ChromosomalArchitecture(List<Gene<T>> genes, Gene<T> rootGene) {
+		this(rootGene);
+		addGenes(genes);
+	}
+	
+	public ChromosomalArchitecture(ExpressionTreeNode<T> staticLinkingFunction) {
+		this(toStaticGene(staticLinkingFunction));
+	}
+	
+	public ChromosomalArchitecture(List<Gene<T>> genes, ExpressionTreeNode<T> staticLinkingFunction) {
+		this(toStaticGene(staticLinkingFunction));
+		addGenes(genes);
+	}
+
+	public Chromosome<T> createRandomChromosome(RandomEngine r) {
 		
-		if(basicGenes.isEmpty()) {
-			throw new IllegalStateException("Cannot create chromosomes without a regular gene");
+		if(genes.isEmpty()) {
+			throw new IllegalStateException("Cannot create chromosomes without one modifiable gene");
 		}
 		
-		Chromosome c = new Chromosome(basicGenes.size() + homoeoticGenes.size());
+		return new Chromosome<T>(genes, immutableGenes, rootGene);
 
-		int idx = 0;
-		for (GeneArchitecture geneArchitecture : basicGenes) {
-			c.genes[idx] = geneArchitecture.createRandomGene(r);
-			idx++;
+	}
+
+	public void addGene(Gene<T> g) {
+		if(g.architecture.isModifiable) {
+			genes.add(g);
+		} else {
+			immutableGenes.add(g);
 		}
-		for (GeneArchitecture geneArchitecture : homoeoticGenes) {
-			c.genes[idx] = geneArchitecture.createRandomGene(r);
-			idx++;
+	}
+	
+	public void addGenes(List<Gene<T>> genes) {
+		for (Gene<T> g : genes) {
+			addGene(g);
 		}
-
-		return c;
 	}
 
-	public void addBasicGene(GeneArchitecture ga) {
-		basicGenes.add(ga);
+	public void addStaticLinkingFunction(ExpressionTreeNode<T> etn) {
+		immutableGenes.add(toStaticGene(etn));
+	}
+	
+	private static <T> Gene<T> toStaticGene(ExpressionTreeNode<T> etn) {
+
+		ArrayList<GeneElement<T>> sequence = new ArrayList<>();
+		
+		// perform a bfs to convert expression tree to gene
+		Deque<ExpressionTreeNode<T>> queue = new ArrayDeque<>();
+		queue.addLast(etn);
+		
+		while(!queue.isEmpty()) {
+			ExpressionTreeNode<T> currRoot = queue.removeFirst();
+			sequence.add(currRoot.getNodeElement());
+			for (ExpressionTreeNode<T> child : currRoot.getChildren()) {
+				queue.addLast(child);
+			}
+		}
+		
+		return GeneArchitecture.createGeneFromSequence(sequence, false);
 	}
 
-	public void addHomoeoticGene(GeneArchitecture hga) {
-		homoeoticGenes.add(hga);
-	}
 
 }

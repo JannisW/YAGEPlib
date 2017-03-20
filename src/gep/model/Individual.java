@@ -26,7 +26,7 @@ public class Individual<T> {
 	public List<ExpressionTreeNode<T>> getExpressionTrees() {
 		ArrayList<ExpressionTreeNode<T>> ets = new ArrayList<ExpressionTreeNode<T>>(chromosomes.length);
 		
-		for(int i = 0; i < ets.size(); i++) {
+		for(int i = 0; i < chromosomes.length; i++) {
 			ets.add(chromosomes[i].express());
 		}
 		
