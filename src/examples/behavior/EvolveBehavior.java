@@ -17,9 +17,12 @@ import examples.behavior.world.WorldMap;
 import gep.GeneExpressionProgramming;
 import gep.ReproductionEnvironment;
 import gep.model.ChromosomalArchitecture;
+import gep.model.ExpressionTreeNode;
+import gep.model.Gene;
 import gep.model.GeneArchitecture;
 import gep.model.GeneFunction;
 import gep.model.GeneTerminal;
+import gep.model.HomoeoticGeneElement;
 import gep.model.Individual;
 import gep.model.IndividualArchitecture;
 import gep.operators.Mutation;
@@ -63,8 +66,14 @@ public class EvolveBehavior {
 		GeneArchitecture<Boolean> basicArch = new GeneArchitecture<Boolean>(16, supportedBehaviorTreeNodes,
 				potentialTerminals);
 
-		ChromosomalArchitecture chromosomalArch = new ChromosomalArchitecture();
-		chromosomalArch.addBasicGene(basicArch);
+		Gene<Boolean> basicGene = basicArch.createRandomGene();
+
+		ArrayList<HomoeoticGeneElement<Boolean>> homoeoticTerminals = new ArrayList<>();
+		homoeoticTerminals.add(new HomoeoticGeneElement<>("link", "ll", basicGene));
+
+		ChromosomalArchitecture<Boolean> chromosomalArch = new ChromosomalArchitecture<>(
+				new ExpressionTreeNode<>(homoeoticTerminals.get(0)));
+		chromosomalArch.addGene(basicGene);
 
 		Individual<Boolean>[] population = IndividualArchitecture.createSingleChromosomalArchitecture(chromosomalArch)
 				.createRandomPopulation(10, new DefaultRandomEngine());
