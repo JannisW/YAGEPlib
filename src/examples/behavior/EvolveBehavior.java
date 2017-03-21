@@ -83,7 +83,7 @@ public class EvolveBehavior {
 				homoeoticTerminals);
 		Gene<Boolean> homoeoticGene = homoeoticArch.createRandomGene();
 		
-		chromosomeFactory.setChromosomeRoot(homoeoticGene);
+		chromosomeFactory.setChromosomeRootToGene(homoeoticGene);
 
 		Individual<Boolean>[] population = IndividualArchitecture.createSingleChromosomalArchitecture(chromosomeFactory)
 				.createRandomPopulation(NUM_INDIVIDUALS, new DefaultRandomEngine());

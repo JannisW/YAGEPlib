@@ -10,7 +10,7 @@ import gep.random.DefaultRandomEngine;
 import gep.random.RandomEngine;
 
 public class GeneArchitecture<T> {
-	
+
 	public static final RandomEngine DEFAULT_RANDOM_ENGINE = new DefaultRandomEngine();
 
 	public final int headLength;
@@ -32,6 +32,10 @@ public class GeneArchitecture<T> {
 
 		if (potentialTerminals.isEmpty()) {
 			throw new IllegalArgumentException("The set of terminals can't be empty.");
+		}
+		
+		if(headlength < 1) {
+			throw new IllegalArgumentException("The head length has to be greater than 0.");
 		}
 
 		this.headLength = headlength;
@@ -57,17 +61,18 @@ public class GeneArchitecture<T> {
 		// 1)
 		return this.headLength * maxArity + 1;
 	}
-	
+
 	public Gene<T> createRandomGene() {
 		return createRandomGene(DEFAULT_RANDOM_ENGINE);
 	}
 
 	public Gene<T> createRandomGene(RandomEngine r) {
+
 		Gene<T> generatedGene = new Gene<T>(this);
 
 		// generate head
 		for (int i = 0; i < this.headLength; i++) {
-			if (r.decideTakeFunction()) {
+			if (r.decideTakeFunction() && !potentialFunctions.isEmpty()) {
 				generatedGene.setSequenceAt(i, r.pickElement(potentialFunctions));
 			} else {
 				generatedGene.setSequenceAt(i, r.pickElement(potentialTerminals));
@@ -81,7 +86,7 @@ public class GeneArchitecture<T> {
 
 		return generatedGene;
 	}
-	
+
 	public List<Gene<T>> createRandomGenes(int numberOfInstances) {
 		return createRandomGenes(DEFAULT_RANDOM_ENGINE, numberOfInstances);
 	}
@@ -123,21 +128,21 @@ public class GeneArchitecture<T> {
 		GeneArchitecture<T> arch = new GeneArchitecture<>(headlength,
 				new ArrayList<GeneFunction<T>>(potentialFunctions), new ArrayList<GeneTerminal<T>>(potentialTerminals),
 				isModifiable);
-		
+
 		Gene<T> generatedGene = new Gene<T>(arch);
-		
+
 		// copy the sequence
 		int idx = 0;
 		Iterator<GeneElement<T>> it = sequence.iterator();
-		while(idx < generatedGene.getSequenceLength() && it.hasNext()) {
+		while (idx < generatedGene.getSequenceLength() && it.hasNext()) {
 			generatedGene.setSequenceAt(idx, it.next());
 			idx++;
 		}
-		
+
 		// create (additional) gene instances
 		ArrayList<Gene<T>> genes = new ArrayList<>(numInstances);
 		genes.add(generatedGene);
-		for(int i = 1; i < numInstances; i++) {
+		for (int i = 1; i < numInstances; i++) {
 			Gene<T> g = new Gene<T>(arch);
 			g.copyFrom(generatedGene);
 			genes.add(g);

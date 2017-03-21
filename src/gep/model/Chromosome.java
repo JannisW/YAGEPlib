@@ -17,7 +17,7 @@ public class Chromosome<T> {
 	public final Gene<T>[] genes;
 	private final Gene<T>[] immutableGenes;
 
-	private final Gene<T> linkingFunction;
+	private final Gene<T> staticLinkingFunction;
 
 	/**
 	 * Creates a Chromosome that only contains one Gene.
@@ -29,13 +29,13 @@ public class Chromosome<T> {
 	public Chromosome(Gene<T> gene) {
 		this.genes = new Gene[0];
 		this.immutableGenes = new Gene[0];
-		this.linkingFunction = gene;
+		this.staticLinkingFunction = gene;
 	}
 
 	public Chromosome(Gene<T>[] genes, Gene<T>[] immutableGenes, Gene<T> linkingFunction) {
 		this.genes = genes;
 		this.immutableGenes = immutableGenes;
-		this.linkingFunction = linkingFunction;
+		this.staticLinkingFunction = linkingFunction;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -49,11 +49,12 @@ public class Chromosome<T> {
 			// TODO maybe no hard copy needed here as immutable (share objects)
 			this.immutableGenes[i] = new Gene<T>(other.immutableGenes[i]);
 		}
-		this.linkingFunction = new Gene<T>(other.linkingFunction);
+		// TODO no hard copy needed here as immutable
+		this.staticLinkingFunction = new Gene<T>(other.staticLinkingFunction);
 	}
 
 	public ExpressionTreeNode<T> express() {
-		ExpressionTreeNode<T> rootEtn = linkingFunction.express(this);
+		ExpressionTreeNode<T> rootEtn = staticLinkingFunction.express(this);
 		return rootEtn;
 	}
 
@@ -66,7 +67,7 @@ public class Chromosome<T> {
 	 */
 	public Gene<T> getGene(int geneId) {
 		if (geneId == 0) {
-			return linkingFunction;
+			return staticLinkingFunction;
 		} else if (geneId > 0) {
 			return genes[geneId - 1];
 		} else {
