@@ -25,6 +25,7 @@ import gep.model.GeneTerminal;
 import gep.model.HomoeoticGeneElement;
 import gep.model.Individual;
 import gep.model.IndividualArchitecture;
+import gep.operators.GeneRecombination;
 import gep.operators.Inversion;
 import gep.operators.Mutation;
 import gep.random.DefaultRandomEngine;
@@ -89,8 +90,9 @@ public class EvolveBehavior {
 				.createRandomPopulation(NUM_INDIVIDUALS, new DefaultRandomEngine());
 
 		ReproductionEnvironment re = new ReproductionEnvironment();
-		re.addGeneticOperator(new Mutation(0.1));
+		re.addGeneticOperator(new Mutation(0.15));
 		re.addGeneticOperator(new Inversion(0.1));
+		re.addGeneticOperator(new GeneRecombination(0.3));
 
 		SelectionMethod sm = new RouletteWheelSelectionWithElitePreservation();
 
