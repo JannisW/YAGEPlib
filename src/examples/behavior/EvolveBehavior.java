@@ -32,6 +32,9 @@ import gep.selection.RouletteWheelSelectionWithElitePreservation;
 import gep.selection.SelectionMethod;
 
 public class EvolveBehavior {
+	
+	public static final int NUM_INDIVIDUALS = 50;
+	public static final int MAX_NUM_GENERATIONS = 100;
 
 	public static void main(String[] args) {
 
@@ -83,7 +86,7 @@ public class EvolveBehavior {
 		chromosomeFactory.setChromosomeRoot(homoeoticGene);
 
 		Individual<Boolean>[] population = IndividualArchitecture.createSingleChromosomalArchitecture(chromosomeFactory)
-				.createRandomPopulation(10, new DefaultRandomEngine());
+				.createRandomPopulation(NUM_INDIVIDUALS, new DefaultRandomEngine());
 
 		ReproductionEnvironment re = new ReproductionEnvironment();
 		re.addGeneticOperator(new Mutation(0.1));
@@ -91,7 +94,7 @@ public class EvolveBehavior {
 
 		SelectionMethod sm = new RouletteWheelSelectionWithElitePreservation();
 
-		GeneExpressionProgramming.run(population, env, sm, re, 10, Double.MAX_VALUE);
+		GeneExpressionProgramming.run(population, env, sm, re, MAX_NUM_GENERATIONS, Double.MAX_VALUE);
 	}
 
 }

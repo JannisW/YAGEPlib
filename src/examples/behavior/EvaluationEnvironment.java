@@ -22,15 +22,22 @@ public class EvaluationEnvironment extends FitnessEnvironment<Boolean> {
 	public Field[][] grid;
 
 	private int foodConsumed = 0;
+	private int movedDistance = 0;
 
-	// start with a budget of possible wrong moves.
-	private double currentFitnessScore = START_FITNESS;
+	/**
+	 * The current fitness score for the current fitness case (map) 
+	 */
+	private double currentFitnessScore;
+	
+	private double totalFitnessScore;
 
 	// the different maps (fitness cases) for generalization
 	private final WorldMap[] maps;
 
 	public EvaluationEnvironment(ArrayList<WorldMap> maps) {
 		this.maps = maps.toArray(new WorldMap[maps.size()]);
+		resetFitnessScorePerMap();
+		resetTotalFitnessScore();
 	}
 
 	/**
@@ -64,6 +71,7 @@ public class EvaluationEnvironment extends FitnessEnvironment<Boolean> {
 			// every valid step gives a plus point (makes the agent move)
 			currentFitnessScore++;
 		}
+		movedDistance++;
 		return true;
 	}
 
@@ -109,9 +117,11 @@ public class EvaluationEnvironment extends FitnessEnvironment<Boolean> {
 	@Override
 	protected double evaluateFitness(Individual<Boolean> individual) {
 
-		resetFitnessScore();
+		resetTotalFitnessScore();
 
 		for (WorldMap map : maps) {
+			
+			resetFitnessScorePerMap();
 
 			grid = map.initMap();
 			posAgentX = map.getStartPositionX();
@@ -135,19 +145,29 @@ public class EvaluationEnvironment extends FitnessEnvironment<Boolean> {
 
 				numberOfTicks++; // TODO maybe also couple to number of steps
 			}
+			
+			if(movedDistance == 0) {
+				// if no movement during the whole simulation high penalty to eliminate this behavior
+				currentFitnessScore = 0;
+			}
 
+			totalFitnessScore += currentFitnessScore;
 		}
 		
 		System.out.println("SCORE: " + currentFitnessScore);
 
-		return this.currentFitnessScore;
+		return this.totalFitnessScore;
 
 		// TODO check if that makes sense... especially wrt. parallelization
 		// etc.
 	}
 	
-	private void resetFitnessScore() {
+	private void resetFitnessScorePerMap() {
 		this.currentFitnessScore = START_FITNESS;
+	}
+	
+	private void resetTotalFitnessScore() {
+		this.totalFitnessScore = 0;
 	}
 
 }
