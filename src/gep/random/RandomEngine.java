@@ -49,4 +49,15 @@ public interface RandomEngine {
 	 * @return a double between 0.0 and 1.0
 	 */
 	double getDouble();
+
+	/**
+	 * Returns a integer between from (inclusive) and to (exclusive)
+	 * 
+	 * @param from
+	 *            The smallest possible returned int
+	 * @param to
+	 *            The upper bound (exclusive)
+	 * @return a random integer from the interval [from, to)
+	 */
+	public int getInt(int from, int to);
 }

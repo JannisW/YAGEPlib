@@ -1,50 +1,31 @@
 package gep.operators;
 
-import gep.model.Chromosome;
 import gep.model.Gene;
-import gep.model.Individual;
-import gep.random.DefaultRandomEngine;
 import gep.random.RandomEngine;
 
-public class Mutation implements GeneticOperator {
-
-	private double mutationRate;
-
-	private final RandomEngine random;
+public class Mutation extends GeneticOperator {
 
 	public Mutation(double mutationRate) {
-		this.mutationRate = mutationRate;
-		this.random = new DefaultRandomEngine();
+		super(mutationRate);
 	}
 
 	public Mutation(double mutationRate, RandomEngine re) {
-		this.mutationRate = mutationRate;
-		this.random = re;
+		super(mutationRate, re);
 	}
 
 	@Override
-	public <T> void apply(Individual<T>[] individuals) {
-		for (Individual<T> individual : individuals) {
-			for (Chromosome<T> c : individual.chromosomes) {
-				for (Gene<T> g : c.genes) {
-					for (int i = 0; i < g.sequence.length; i++) {
-						if (random.decideBinaryDecision(mutationRate)) {
-							if (g.isPartOfHead(i) && random.decideTakeFunction()) {
-								g.sequence[i] = random.pickElement(g.architecture.potentialFunctions);
-							} else {
-								g.sequence[i] = random.pickElement(g.architecture.potentialTerminals);
-							}
-							g.invalidateExpressionTreeCache();
-						}
-					}
+	public <T> void apply(Gene<T> g) {
+		for (int i = 0; i < g.sequence.length; i++) {
+			if (random.decideBinaryDecision(super.applicationRate)) {
+				if (g.isPartOfHead(i) && random.decideTakeFunction()) {
+					g.sequence[i] = random.pickElement(g.architecture.potentialFunctions);
+				} else {
+					g.sequence[i] = random.pickElement(g.architecture.potentialTerminals);
 				}
+				g.invalidateExpressionTreeCache();
 			}
 		}
-	}
 
-	@Override
-	public double getApplicationRate() {
-		return mutationRate;
 	}
 
 	@Override
