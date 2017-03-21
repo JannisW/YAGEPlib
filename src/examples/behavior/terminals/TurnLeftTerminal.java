@@ -1,6 +1,6 @@
 package examples.behavior.terminals;
 
-import examples.behavior.EvaluationEnvironment;
+import examples.behavior.fitness.EvaluationEnvironment;
 import examples.behavior.world.Orientation;
 import gep.model.ChromosomeIndependentGeneTerminal;
 

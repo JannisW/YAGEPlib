@@ -4,6 +4,10 @@ import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 
+import examples.behavior.fitness.AlternativeFitnessFunction;
+import examples.behavior.fitness.BehaviorFitnessFunction;
+import examples.behavior.fitness.ClassicFitnessFunction;
+import examples.behavior.fitness.EvaluationEnvironment;
 import examples.behavior.functions.InversionFunction;
 import examples.behavior.functions.SelectorFunction;
 import examples.behavior.functions.SequenceFunction;
@@ -33,9 +37,13 @@ import gep.selection.RouletteWheelSelectionWithElitePreservation;
 import gep.selection.SelectionMethod;
 
 public class EvolveBehavior {
-	
+
 	public static final int NUM_INDIVIDUALS = 50;
 	public static final int MAX_NUM_GENERATIONS = 100;
+	public static boolean USE_CLASSIC_FITNESS_FUNCTION = true;
+	
+	public static final BehaviorFitnessFunction FITNESSFUNCTION_PER_MAP = USE_CLASSIC_FITNESS_FUNCTION
+			? new ClassicFitnessFunction() : new AlternativeFitnessFunction();
 
 	public static void main(String[] args) {
 
@@ -49,7 +57,7 @@ public class EvolveBehavior {
 			return;
 		}
 		System.out.println("done (" + maps.size() + " map(s) created)");
-		EvaluationEnvironment env = new EvaluationEnvironment(maps);
+		EvaluationEnvironment env = new EvaluationEnvironment(maps, FITNESSFUNCTION_PER_MAP);
 
 		ArrayList<GeneFunction<Boolean>> supportedBehaviorTreeNodes = new ArrayList<GeneFunction<Boolean>>(3);
 		supportedBehaviorTreeNodes.add(new SelectorFunction());
@@ -76,14 +84,14 @@ public class EvolveBehavior {
 
 		ChromosomalArchitecture<Boolean> chromosomeFactory = new ChromosomalArchitecture<>();
 		int basicGeneId = chromosomeFactory.addGene(basicGene);
-		
+
 		ArrayList<HomoeoticGeneElement<Boolean>> homoeoticTerminals = new ArrayList<>();
 		homoeoticTerminals.add(new HomoeoticGeneElement<>("link", "ll", basicGeneId));
-		
+
 		GeneArchitecture<Boolean> homoeoticArch = new GeneArchitecture<Boolean>(1, supportedBehaviorTreeNodes,
 				homoeoticTerminals);
 		Gene<Boolean> homoeoticGene = homoeoticArch.createRandomGene();
-		
+
 		chromosomeFactory.setChromosomeRootToGene(homoeoticGene);
 
 		Individual<Boolean>[] population = IndividualArchitecture.createSingleChromosomalArchitecture(chromosomeFactory)

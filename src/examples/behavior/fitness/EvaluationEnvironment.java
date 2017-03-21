@@ -1,4 +1,4 @@
-package examples.behavior;
+package examples.behavior.fitness;
 
 import java.util.ArrayList;
 
@@ -11,7 +11,7 @@ import gep.model.Individual;
 
 public class EvaluationEnvironment extends FitnessEnvironment<Boolean> {
 
-	final static int MAX_NUMBER_OF_SIMULATION_TICKS = 40;
+	final static int MAX_NUMBER_OF_SIMULATION_TICKS = 400;
 	final static double START_FITNESS = 100.0;
 
 	private int posAgentX;
@@ -25,18 +25,22 @@ public class EvaluationEnvironment extends FitnessEnvironment<Boolean> {
 	private int movedDistance = 0;
 
 	/**
-	 * The current fitness score for the current fitness case (map) 
+	 * controls the current fitness score for the current fitness case (map)
 	 */
-	private double currentFitnessScore;
-	
+	protected BehaviorFitnessFunction fitnessFunction;
+
+	/**
+	 * Keeps the accumulated fitness score over all maps.
+	 */
 	private double totalFitnessScore;
 
 	// the different maps (fitness cases) for generalization
 	private final WorldMap[] maps;
 
-	public EvaluationEnvironment(ArrayList<WorldMap> maps) {
+	public EvaluationEnvironment(ArrayList<WorldMap> maps, BehaviorFitnessFunction fitnessFunctionPerMap) {
 		this.maps = maps.toArray(new WorldMap[maps.size()]);
-		resetFitnessScorePerMap();
+		this.fitnessFunction = fitnessFunctionPerMap;
+		fitnessFunction.resetFitnessScorePerMap();
 		resetTotalFitnessScore();
 	}
 
@@ -55,22 +59,23 @@ public class EvaluationEnvironment extends FitnessEnvironment<Boolean> {
 	 * @return true, if the move was successful, false otherwise.
 	 */
 	public boolean moveTo(int x, int y) {
-		//System.out.println("CALLED");
+		// System.out.println("CALLED");
 		if (grid[x][y].isWall()) {
 			// give penalty for actually try to move on a field with a wall.
-			currentFitnessScore = Math.max(0, currentFitnessScore - 2);
+			fitnessFunction.applyWalkIntoWallPenalty();
 			return false;
 		}
+		// every valid step gives a plus point (makes the agent move)
+		fitnessFunction.applyValidMovementBonus();
+
 		posAgentX = x;
 		posAgentY = y;
 		if (grid[x][y].isFood()) {
 			grid[x][y].removeFood();
 			foodConsumed++;
-			currentFitnessScore += 22;
-		} else {
-			// every valid step gives a plus point (makes the agent move)
-			currentFitnessScore++;
+			fitnessFunction.applyFoodConsumedBonus();
 		}
+		
 		movedDistance++;
 		return true;
 	}
@@ -120,8 +125,9 @@ public class EvaluationEnvironment extends FitnessEnvironment<Boolean> {
 		resetTotalFitnessScore();
 
 		for (WorldMap map : maps) {
-			
-			resetFitnessScorePerMap();
+
+			fitnessFunction.resetFitnessScorePerMap();
+			foodConsumed = 0;
 
 			grid = map.initMap();
 			posAgentX = map.getStartPositionX();
@@ -145,29 +151,27 @@ public class EvaluationEnvironment extends FitnessEnvironment<Boolean> {
 
 				numberOfTicks++; // TODO maybe also couple to number of steps
 			}
-			
-			if(movedDistance == 0) {
-				// if no movement during the whole simulation high penalty to eliminate this behavior
-				currentFitnessScore = 0;
+
+			if (movedDistance == 0) {
+				// if no movement during the whole simulation high penalty to
+				// eliminate this behavior
+				fitnessFunction.applyNoMovementPenalty();
 			}
 
-			totalFitnessScore += currentFitnessScore;
+			totalFitnessScore += fitnessFunction.getCurrentScore();
 		}
-		
-		System.out.println("SCORE: " + currentFitnessScore);
+
+		System.out.println("SCORE: " + totalFitnessScore + " (food consumed: " + foodConsumed + ")");
 
 		return this.totalFitnessScore;
 
 		// TODO check if that makes sense... especially wrt. parallelization
 		// etc.
 	}
-	
-	private void resetFitnessScorePerMap() {
-		this.currentFitnessScore = START_FITNESS;
-	}
-	
-	private void resetTotalFitnessScore() {
+
+	protected void resetTotalFitnessScore() {
 		this.totalFitnessScore = 0;
+		this.foodConsumed = 0;
 	}
 
 }

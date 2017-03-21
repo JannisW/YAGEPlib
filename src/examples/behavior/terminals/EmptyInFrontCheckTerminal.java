@@ -1,6 +1,6 @@
 package examples.behavior.terminals;
 
-import examples.behavior.EvaluationEnvironment;
+import examples.behavior.fitness.EvaluationEnvironment;
 import gep.model.ChromosomeIndependentGeneTerminal;
 
 public class EmptyInFrontCheckTerminal extends ChromosomeIndependentGeneTerminal<Boolean> {
