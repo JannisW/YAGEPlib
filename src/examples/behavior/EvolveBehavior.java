@@ -90,11 +90,11 @@ public class EvolveBehavior {
 				.createRandomPopulation(NUM_INDIVIDUALS, new DefaultRandomEngine());
 
 		ReproductionEnvironment re = new ReproductionEnvironment();
-		re.addGeneticOperator(new Mutation(0.15));
+		re.addGeneticOperator(new Mutation(0.2));
 		re.addGeneticOperator(new Inversion(0.1));
 		re.addGeneticOperator(new GeneRecombination(0.3));
 
-		SelectionMethod sm = new RouletteWheelSelectionWithElitePreservation();
+		SelectionMethod sm = new RouletteWheelSelectionWithElitePreservation(0.05);
 
 		GeneExpressionProgramming.run(population, env, sm, re, MAX_NUM_GENERATIONS, Double.MAX_VALUE);
 	}

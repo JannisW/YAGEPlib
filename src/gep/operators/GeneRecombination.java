@@ -16,24 +16,24 @@ public class GeneRecombination extends GeneticOperator {
 	}
 
 	@Override
-	public <T> void apply(Individual<T>[] individuals) {
-		if (individuals.length < 2) {
-			// this operator requires at least
+	public <T> void apply(Individual<T>[] individuals, int fromIdx) {
+		if (individuals.length - fromIdx < 2) {
+			// this operator requires at least two modifiable individuals
 			throw new IllegalArgumentException(
-					"The GeneRecombination operator requires at least two individuals in the population.");
+					"The GeneRecombination operator requires at least two modifiable individuals in the population.");
 		}
 
-		for (int i = 0; i < individuals.length; i++) {
+		for (int i = fromIdx; i < individuals.length; i++) {
 			Individual<T> individual = individuals[i];
 			for (int cIdx = 0; cIdx < individual.chromosomes.length; cIdx++) {
 				if (random.decideBinaryDecision(super.applicationRate)) {
 					// chromosome was selected => find another individual to
 					// recombine with
-					int otherIndiIdx = super.random.getInt(0, individuals.length);
+					int otherIndiIdx = super.random.getInt(fromIdx, individuals.length);
 					if (otherIndiIdx == i) {
-						otherIndiIdx = (otherIndiIdx > 0) ? otherIndiIdx - 1 : otherIndiIdx + 1;
+						otherIndiIdx = (otherIndiIdx > fromIdx) ? otherIndiIdx - 1 : otherIndiIdx + 1;
 					}
-					
+
 					Chromosome<T> parent1Chromosome = individual.chromosomes[cIdx];
 					int pickedGeneId = random.getInt(0, parent1Chromosome.genes.length);
 					Chromosome<T> parent2Chromosome = individuals[otherIndiIdx].chromosomes[cIdx];
@@ -50,7 +50,7 @@ public class GeneRecombination extends GeneticOperator {
 
 	@Override
 	protected <T> void apply(Gene<T> gene) {
-		// TODO Auto-generated method stub
+		// can't be called => method stub!
 		throw new UnsupportedOperationException("This operator works on chromosome level");
 	}
 

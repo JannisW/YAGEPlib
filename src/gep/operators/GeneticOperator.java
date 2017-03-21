@@ -23,18 +23,23 @@ public abstract class GeneticOperator {
 	}
 
 	/**
-	 * Applies the genetic operator to the given set of individuals. This is the
-	 * only public function and thus the function called by the GEP framework.
+	 * Applies the genetic operator to the given array of individuals starting
+	 * at index fromIdx. This is the only public function and thus the function
+	 * called by the GEP framework.
 	 * 
 	 * If the genetic operator works on the level of populations this method has
-	 * to be overridden.
+	 * to be overridden. In this case make sure the from parameter is respected.
 	 * 
-	 * @param individuals
+	 * @param fromIdx
+	 *            The index (inclusive) from which on the population should be
+	 *            changed by this operator.
+	 * 
+	 * @param population
 	 *            The set of individuals
 	 */
-	public <T> void apply(Individual<T>[] individuals) {
-		for (Individual<T> individual : individuals) {
-			apply(individual);
+	public <T> void apply(Individual<T>[] population, int fromIdx) {
+		for (int i = fromIdx; i < population.length; i++) {
+			apply(population[i]);
 		}
 	}
 

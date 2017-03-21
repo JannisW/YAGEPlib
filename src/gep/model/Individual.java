@@ -8,7 +8,7 @@ public class Individual<T> implements Comparable<Individual<T>> {
 	public final Chromosome<T>[] chromosomes;
 
 	private double fitness;
-
+	
 	public Individual(int numChromosomes) {
 		// TODO find a better solution.... These Java generics argh...
 		this.chromosomes = (Chromosome<T>[]) new Chromosome<?>[numChromosomes];

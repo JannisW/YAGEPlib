@@ -15,8 +15,8 @@ public class GeneExpressionProgramming {
 
 		do {
 			fitnessOfBestIndividual = fe.evaluateFitness(population);
-			sm.select(population);
-			re.reproduce(population);
+			int modStartIdx = sm.select(population);
+			re.reproduce(population, modStartIdx);
 			currentGeneration++;
 			System.out.println(
 					"Finished generation " + currentGeneration + " (Best fitness: " + fitnessOfBestIndividual + ")");

@@ -28,12 +28,12 @@ public class RouletteWheelSelectionWithElitePreservation implements SelectionMet
 	}
 
 	@Override
-	public <T> void select(Individual<T>[] population) {
-		select(population, this.random);
+	public <T> int select(Individual<T>[] population) {
+		return select(population, this.random);
 	}
 
 	@Override
-	public <T> void select(Individual<T>[] population, RandomEngine random) {
+	public <T> int select(Individual<T>[] population, RandomEngine random) {
 
 		// To avoid to copy too many objects keep the original objects before
 		// copying
@@ -89,6 +89,8 @@ public class RouletteWheelSelectionWithElitePreservation implements SelectionMet
 				isPartOfNewPopulation[idx] = true;
 			}
 		}
+		
+		return numElitesPreserved;
 	}
 
 	class IndexedIndividualComparator<T> implements Comparator<Integer> {
