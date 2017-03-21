@@ -2,9 +2,9 @@ package examples.behavior.terminals;
 
 import examples.behavior.EvaluationEnvironment;
 import examples.behavior.world.Orientation;
-import gep.model.GeneTerminal;
+import gep.model.ChromosomeIndependentGeneTerminal;
 
-public class TurnRightTerminal extends GeneTerminal<Boolean> {
+public class TurnRightTerminal extends ChromosomeIndependentGeneTerminal<Boolean> {
 	
 	private EvaluationEnvironment env;
 

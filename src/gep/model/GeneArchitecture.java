@@ -11,24 +11,24 @@ import gep.random.RandomEngine;
 
 public class GeneArchitecture<T> {
 	
-	private static final RandomEngine DEFAULT_RANDOM_ENGINE = new DefaultRandomEngine();
+	public static final RandomEngine DEFAULT_RANDOM_ENGINE = new DefaultRandomEngine();
 
 	public final int headLength;
 
 	public final int maxArity;
 
 	public final ArrayList<GeneFunction<T>> potentialFunctions;
-	public final ArrayList<GeneTerminal<T>> potentialTerminals;
+	public final ArrayList<? extends GeneTerminal<T>> potentialTerminals;
 
 	public final boolean isModifiable;
 
 	public GeneArchitecture(int headlength, ArrayList<GeneFunction<T>> potentialFunctions,
-			ArrayList<GeneTerminal<T>> potentialTerminals) {
+			ArrayList<? extends GeneTerminal<T>> potentialTerminals) {
 		this(headlength, potentialFunctions, potentialTerminals, true);
 	}
 
 	public GeneArchitecture(int headlength, ArrayList<GeneFunction<T>> potentialFunctions,
-			ArrayList<GeneTerminal<T>> potentialTerminals, boolean isModifiable) {
+			ArrayList<? extends GeneTerminal<T>> potentialTerminals, boolean isModifiable) {
 
 		if (potentialTerminals.isEmpty()) {
 			throw new IllegalArgumentException("The set of terminals can't be empty.");

@@ -39,7 +39,7 @@ public class IndividualArchitecture<T> {
 
 		int idx = 0;
 		for (ChromosomalArchitecture<T> chromoArchitecture : chromosomeArchitecture) {
-			individual.chromosomes[idx] = chromoArchitecture.createRandomChromosome(r);
+			individual.chromosomes[idx] = chromoArchitecture.create(r);
 			idx++;
 		}
 

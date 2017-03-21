@@ -15,7 +15,7 @@ public abstract class GeneElement<T> {
 	
 	public abstract int getArity();
 	
-	public abstract T apply(List<ExpressionTreeNode<T>> expTreeChilds);
+	public abstract T apply(List<ExpressionTreeNode<T>> expTreeChilds, Chromosome<T> executingChromosome);
 	
 	@Override
 	public String toString() {

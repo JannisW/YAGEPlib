@@ -5,6 +5,8 @@ import java.util.List;
 
 import org.junit.Test;
 
+import gep.model.Chromosome;
+import gep.model.ChromosomeIndependentGeneTerminal;
 import gep.model.ExpressionTreeNode;
 import gep.model.Gene;
 import gep.model.GeneArchitecture;
@@ -49,7 +51,8 @@ public class GeneTest {
 			gene.sequence[i] = potentialTerminals.get(i-5);
 		}
 		
-		ExpressionTreeNode<Boolean> etn = gene.express();	
+		Chromosome<Boolean> c = new Chromosome<>(gene);
+		ExpressionTreeNode<Boolean> etn = gene.express(c);	
 
 		System.out.println(etn);
 		
@@ -120,7 +123,7 @@ public class GeneTest {
 
 	}
 
-	class GenericTerminal extends GeneTerminal<Boolean> {
+	class GenericTerminal extends ChromosomeIndependentGeneTerminal<Boolean> {
 
 		public GenericTerminal(int id) {
 			super("generic terminal(ID="+id+")", "t"+id);

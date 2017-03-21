@@ -1,7 +1,5 @@
 package gep.model;
 
-import java.util.List;
-
 /**
  * TODO class useful?
  * 
@@ -21,12 +19,22 @@ public class Chromosome<T> {
 
 	private final Gene<T> linkingFunction;
 
+	/**
+	 * Creates a Chromosome that only contains one Gene.
+	 * 
+	 * @param gene
+	 *            The contained gene.
+	 */
 	@SuppressWarnings("unchecked")
-	public Chromosome(List<Gene<T>> genes, List<Gene<T>> immutableGenes, Gene<T> linkingFunction) {
-		this.genes = new Gene[genes.size()];
-		genes.toArray(this.genes);
-		this.immutableGenes = new Gene[immutableGenes.size()];
-		immutableGenes.toArray(this.immutableGenes);
+	public Chromosome(Gene<T> gene) {
+		this.genes = new Gene[0];
+		this.immutableGenes = new Gene[0];
+		this.linkingFunction = gene;
+	}
+
+	public Chromosome(Gene<T>[] genes, Gene<T>[] immutableGenes, Gene<T> linkingFunction) {
+		this.genes = genes;
+		this.immutableGenes = immutableGenes;
 		this.linkingFunction = linkingFunction;
 	}
 
@@ -45,8 +53,25 @@ public class Chromosome<T> {
 	}
 
 	public ExpressionTreeNode<T> express() {
-		ExpressionTreeNode<T> rootEtn = linkingFunction.express();
+		ExpressionTreeNode<T> rootEtn = linkingFunction.express(this);
 		return rootEtn;
+	}
+
+	/**
+	 * GeneId: = 0 linking function, > 0 normal gene (ascending) < 0 immutable
+	 * gene (ascending, when negate)
+	 * 
+	 * @param geneId
+	 * @return
+	 */
+	public Gene<T> getGene(int geneId) {
+		if (geneId == 0) {
+			return linkingFunction;
+		} else if (geneId > 0) {
+			return genes[geneId - 1];
+		} else {
+			return immutableGenes[(-geneId) - 1];
+		}
 	}
 
 }

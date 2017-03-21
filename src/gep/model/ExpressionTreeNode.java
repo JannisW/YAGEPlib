@@ -10,15 +10,19 @@ public class ExpressionTreeNode<T> {
 	private final GeneElement<T> nodeElement;
 
 	private final ArrayList<ExpressionTreeNode<T>> children;
+	
+	private final Chromosome<T> relatedChromosome;
 
-	public ExpressionTreeNode(GeneElement<T> nodeElement) {
+	public ExpressionTreeNode(GeneElement<T> nodeElement, Chromosome<T> relatedChromosome) {
 		this.nodeElement = nodeElement;
 		this.children = new ArrayList<ExpressionTreeNode<T>>(nodeElement.getArity());
+		this.relatedChromosome = relatedChromosome;
 	}
 	
-	public ExpressionTreeNode(GeneElement<T> nodeElement, ArrayList<ExpressionTreeNode<T>> children) {
+	public ExpressionTreeNode(GeneElement<T> nodeElement, ArrayList<ExpressionTreeNode<T>> children, Chromosome<T> relatedChromosome) {
 		this.nodeElement = nodeElement;
 		this.children = children;
+		this.relatedChromosome = relatedChromosome;
 	}
 
 	// TODO maybe change to unmodifiable list (collections_unmodifiablelist)
@@ -39,7 +43,7 @@ public class ExpressionTreeNode<T> {
 	 *         expression tree.
 	 */
 	public T execute() {
-		return this.nodeElement.apply(children);
+		return this.nodeElement.apply(children, relatedChromosome);
 	}
 
 	@Override

@@ -1,9 +1,9 @@
 package examples.behavior.terminals;
 
 import examples.behavior.EvaluationEnvironment;
-import gep.model.GeneTerminal;
+import gep.model.ChromosomeIndependentGeneTerminal;
 
-public class PheroInFrontCheckTerminal extends GeneTerminal<Boolean> {
+public class PheroInFrontCheckTerminal extends ChromosomeIndependentGeneTerminal<Boolean> {
 
 	private EvaluationEnvironment env;
 

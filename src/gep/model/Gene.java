@@ -70,24 +70,26 @@ public class Gene<T> {
 	 * of this gene. The ExpressionTree will only contain those gene elements
 	 * which are in the coding region of the Gene.
 	 * 
+	 * @param chromosome The chromosome that contains this gene (TODO better description??)
+	 * 
 	 * @return The ExpressionTree encoded by this Gene in its current
 	 *         configuration.
 	 */
-	public ExpressionTreeNode<T> express() {
+	public ExpressionTreeNode<T> express(Chromosome<T> chromosome) {
 
 		if (expressionTreeCache != null) {
 			return expressionTreeCache;
 		}
 
 		Deque<ExpressionTreeNode<T>> elementQueue = new ArrayDeque<ExpressionTreeNode<T>>();
-		ExpressionTreeNode<T> etnRoot = new ExpressionTreeNode<T>(sequence[0]);
+		ExpressionTreeNode<T> etnRoot = new ExpressionTreeNode<T>(sequence[0], chromosome);
 		elementQueue.push(etnRoot);
 		int idx = 1;
 
 		while (!elementQueue.isEmpty()) {
 			ExpressionTreeNode<T> currParent = elementQueue.removeFirst();
 			for (int i = 0; i < currParent.getNodeElement().getArity(); i++) {
-				ExpressionTreeNode<T> currChild = new ExpressionTreeNode<>(sequence[idx]);
+				ExpressionTreeNode<T> currChild = new ExpressionTreeNode<>(sequence[idx], chromosome);
 				currParent.getChildren().add(currChild);
 				elementQueue.addLast(currChild);
 				idx++;

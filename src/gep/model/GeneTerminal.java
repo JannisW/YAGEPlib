@@ -13,11 +13,10 @@ public abstract class GeneTerminal<T> extends GeneElement<T> {
 		return 0;
 	}
 	
-	@Override
-	final public T apply(List<ExpressionTreeNode<T>> expTreeChilds) {
-		return apply();
+	public final T apply(List<ExpressionTreeNode<T>> expTreeChilds, Chromosome<T> executingChromosome) {
+		return apply(executingChromosome);
 	}
 	
-	public abstract T apply();
+	public abstract T apply(Chromosome<T> executingChromosome);
 	
 }

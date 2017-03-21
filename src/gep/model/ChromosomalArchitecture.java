@@ -3,10 +3,7 @@ package gep.model;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Deque;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import gep.random.RandomEngine;
 
@@ -23,50 +20,47 @@ public class ChromosomalArchitecture<T> {
 	private ArrayList<Gene<T>> genes;
 	private ArrayList<Gene<T>> immutableGenes;
 
-	private final Gene<T> rootGene;
+	private Gene<T> rootGene = null;
 	
-	public ChromosomalArchitecture(Gene<T> rootGene) {
+	public ChromosomalArchitecture() {
 		this.genes = new ArrayList<Gene<T>>();
 		this.immutableGenes = new ArrayList<Gene<T>>();
-		this.rootGene = rootGene;
+		this.rootGene = null;
 	}
 
-	public ChromosomalArchitecture(List<Gene<T>> genes, Gene<T> rootGene) {
-		this(rootGene);
-		addGenes(genes);
-	}
-	
-	public ChromosomalArchitecture(ExpressionTreeNode<T> staticLinkingFunction) {
-		this(toStaticGene(staticLinkingFunction));
-	}
-	
-	public ChromosomalArchitecture(List<Gene<T>> genes, ExpressionTreeNode<T> staticLinkingFunction) {
-		this(toStaticGene(staticLinkingFunction));
+	public ChromosomalArchitecture(List<Gene<T>> genes) {
+		this();
 		addGenes(genes);
 	}
 
-	public Chromosome<T> createRandomChromosome(RandomEngine r) {
-		
-		if(genes.isEmpty()) {
-			throw new IllegalStateException("Cannot create chromosomes without one modifiable gene");
-		}
-		
-		return new Chromosome<T>(genes, immutableGenes, rootGene);
-
-	}
-
-	public void addGene(Gene<T> g) {
+	public int addGene(Gene<T> g) {
 		if(g.architecture.isModifiable) {
 			genes.add(g);
+			return genes.size();
 		} else {
 			immutableGenes.add(g);
+			return immutableGenes.size();
 		}
 	}
 	
-	public void addGenes(List<Gene<T>> genes) {
+	public List<Integer> addGenes(List<Gene<T>> genes) {
+		ArrayList<Integer> ids = new ArrayList<>(genes.size());
 		for (Gene<T> g : genes) {
-			addGene(g);
+			ids.add(addGene(g));
 		}
+		return ids;
+	}
+	
+	public void setChromosomeRoot(ExpressionTreeNode<T> staticLinkingFunctionAsRoot) {
+		setChromosomeRoot(toStaticGene(staticLinkingFunctionAsRoot));
+	}
+	
+	public void setChromosomeRoot(Gene<T> rootGene) {
+		if(this.rootGene != null) {
+			throw new IllegalStateException("The Chromosomes root is unique and can only be set once!");
+		}
+		
+		this.rootGene = rootGene;
 	}
 
 	public void addStaticLinkingFunction(ExpressionTreeNode<T> etn) {
@@ -92,9 +86,37 @@ public class ChromosomalArchitecture<T> {
 		return GeneArchitecture.createGeneFromSequence(sequence, false);
 	}
 	
-	private Chromosome<T> create() {
+	public Chromosome<T> create() {
+		return create(GeneArchitecture.DEFAULT_RANDOM_ENGINE);
+	}
+	
+	public Chromosome<T> create(RandomEngine r) {
 		
-		Deque<Gene<T>> unresolvedDependenciesStack = new ArrayDeque<>();
+		if(genes.isEmpty()) {
+			throw new IllegalStateException("Cannot create chromosomes without one modifiable gene");
+		}
+		
+		if(rootGene == null) {
+			throw new IllegalStateException("The Chromosomes root is not set!");
+		}
+		
+		Gene<T> generatedRoot = rootGene.architecture.createRandomGene(r);
+		
+		@SuppressWarnings("unchecked")
+		Gene<T>[] generatedGenes = new Gene[genes.size()];
+		for(int i = 0; i < genes.size(); i++) {
+			generatedGenes[i] = genes.get(i).architecture.createRandomGene(r);
+		}
+		@SuppressWarnings("unchecked")
+		Gene<T>[] immutableGenes = new Gene[this.immutableGenes.size()];
+		this.immutableGenes.toArray(immutableGenes);
+		
+		return new Chromosome<T>(generatedGenes, immutableGenes, generatedRoot);
+
+	}
+	
+	/*
+	 * Deque<Gene<T>> unresolvedDependenciesStack = new ArrayDeque<>();
 		Set<Gene<T>> unresolvedDependenciesSet = new HashSet<Gene<T>>();
 		unresolvedDependenciesStack.push(rootGene);
 		unresolvedDependenciesSet.add(rootGene);
@@ -106,21 +128,22 @@ public class ChromosomalArchitecture<T> {
 			
 			List<GeneTerminal<T>> potTerminals = curr.architecture.potentialTerminals;
 			
-			boolean dependencyFound = false;
+			boolean unresolvedDependencyFound = false;
 			for (GeneTerminal<T> potTerminal : potTerminals) {
 				if(potTerminal instanceof HomoeoticGeneElement) {
 					HomoeoticGeneElement<T> link = (HomoeoticGeneElement<T>) potTerminal;
 					if(unresolvedDependenciesSet.add(link.linkedGene)) {
 						// new dependency found
 						unresolvedDependenciesStack.push(link.linkedGene);
-						dependencyFound = true;
+						unresolvedDependencyFound = true;
 					}
 				}
 			}
+			if(!unresolvedDependencyFound) {
+				GeneArchitecture<T>
+			}
 		}
-		
-		
-	}
+	 */
 
 
 }

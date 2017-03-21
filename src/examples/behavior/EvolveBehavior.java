@@ -70,14 +70,19 @@ public class EvolveBehavior {
 
 		Gene<Boolean> basicGene = basicArch.createRandomGene();
 
+		ChromosomalArchitecture<Boolean> chromosomeFactory = new ChromosomalArchitecture<>();
+		int basicGeneId = chromosomeFactory.addGene(basicGene);
+		
 		ArrayList<HomoeoticGeneElement<Boolean>> homoeoticTerminals = new ArrayList<>();
-		homoeoticTerminals.add(new HomoeoticGeneElement<>("link", "ll", basicGene));
+		homoeoticTerminals.add(new HomoeoticGeneElement<>("link", "ll", basicGeneId));
+		
+		GeneArchitecture<Boolean> homoeoticArch = new GeneArchitecture<Boolean>(1, supportedBehaviorTreeNodes,
+				homoeoticTerminals);
+		Gene<Boolean> homoeoticGene = homoeoticArch.createRandomGene();
+		
+		chromosomeFactory.setChromosomeRoot(homoeoticGene);
 
-		ChromosomalArchitecture<Boolean> chromosomalArch = new ChromosomalArchitecture<>(
-				new ExpressionTreeNode<>(homoeoticTerminals.get(0)));
-		chromosomalArch.addGene(basicGene);
-
-		Individual<Boolean>[] population = IndividualArchitecture.createSingleChromosomalArchitecture(chromosomalArch)
+		Individual<Boolean>[] population = IndividualArchitecture.createSingleChromosomalArchitecture(chromosomeFactory)
 				.createRandomPopulation(10, new DefaultRandomEngine());
 
 		ReproductionEnvironment re = new ReproductionEnvironment();
