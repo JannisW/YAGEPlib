@@ -77,6 +77,12 @@ public class ChromosomalArchitecture<T> {
 		}
 	}
 
+	/** 
+	 * 
+	 * TODO adjust because not longer usable (expressiontree requires chromosome)...
+	 * 
+	 * @param etn
+	 */
 	public void addStaticLinkingFunction(ExpressionTreeNode<T> etn) {
 		immutableGenes.add(toStaticGene(etn));
 	}
