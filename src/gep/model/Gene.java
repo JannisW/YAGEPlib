@@ -34,7 +34,7 @@ public class Gene<T> {
 		this.architecture = other.architecture;
 		this.sequence = new GeneElement[other.sequence.length];
 		System.arraycopy(other.sequence, 0, sequence, 0, sequence.length);
-		this.expressionTreeCache = null;
+		this.invalidateExpressionTreeCache();
 	}
 
 	/**
@@ -49,7 +49,7 @@ public class Gene<T> {
 			throw new IllegalArgumentException("The gene architecture has to be identical!");
 		}
 		System.arraycopy(other.sequence, 0, sequence, 0, sequence.length);
-		expressionTreeCache = null;
+		this.invalidateExpressionTreeCache();
 	}
 
 	/**

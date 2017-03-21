@@ -14,9 +14,19 @@ package gep.model;
  */
 public class Chromosome<T> {
 
+	/**
+	 * The collection of modifiable genes of the chromosome
+	 */
 	public final Gene<T>[] genes;
+	
+	/**
+	 * The immutable genes of the chromosome (e.g. immutable sub linking constructs)
+	 */
 	private final Gene<T>[] immutableGenes;
 
+	/**
+	 * The top level linking function of the chromosome (immutable)
+	 */
 	private final Gene<T> staticLinkingFunction;
 
 	/**
