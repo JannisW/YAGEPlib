@@ -41,14 +41,14 @@ public class GeneTest {
 		GeneArchitecture<Boolean> arch = new GeneArchitecture<>(headLength, potentialFunctions, potentialTerminals);
 
 		Gene<Boolean> gene = new Gene<>(arch);
-		gene.sequence[0] = twoArgFunc1;
-		gene.sequence[1] = twoArgFunc2;
-		gene.sequence[2] = oneArgFunc;
-		gene.sequence[3] = potentialTerminals.get(0);
-		gene.sequence[4] = twoArgFunc3;
-		gene.sequence[5] = twoArgFunc4;
+		gene.setSequenceAt(0, twoArgFunc1);
+		gene.setSequenceAt(1, twoArgFunc2);
+		gene.setSequenceAt(2, oneArgFunc);
+		gene.setSequenceAt(3, potentialTerminals.get(0));
+		gene.setSequenceAt(4, twoArgFunc3);
+		gene.setSequenceAt(5, twoArgFunc4);
 		for(int i = 6; i < geneLength; i++){
-			gene.sequence[i] = potentialTerminals.get(i-5);
+			gene.setSequenceAt(i, potentialTerminals.get(i-5));
 		}
 		
 		Chromosome<Boolean> c = new Chromosome<>(gene);

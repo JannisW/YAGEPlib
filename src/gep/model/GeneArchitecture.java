@@ -46,7 +46,9 @@ public class GeneArchitecture<T> {
 	}
 
 	/**
-	 * Returns the length of genes which are using this architecture
+	 * Returns the length of genes that are using this architecture.
+	 * 
+	 * The length includes non-coding regions of the gene.
 	 * 
 	 * @return The length of the corresponding gene
 	 */
@@ -66,15 +68,15 @@ public class GeneArchitecture<T> {
 		// generate head
 		for (int i = 0; i < this.headLength; i++) {
 			if (r.decideTakeFunction()) {
-				generatedGene.sequence[i] = r.pickElement(potentialFunctions);
+				generatedGene.setSequenceAt(i, r.pickElement(potentialFunctions));
 			} else {
-				generatedGene.sequence[i] = r.pickElement(potentialTerminals);
+				generatedGene.setSequenceAt(i, r.pickElement(potentialTerminals));
 			}
 		}
 
 		// generate tail
-		for (int i = this.headLength; i < generatedGene.sequence.length; i++) {
-			generatedGene.sequence[i] = r.pickElement(potentialTerminals);
+		for (int i = this.headLength; i < generatedGene.getSequenceLength(); i++) {
+			generatedGene.setSequenceAt(i, r.pickElement(potentialTerminals));
 		}
 
 		return generatedGene;
@@ -127,8 +129,8 @@ public class GeneArchitecture<T> {
 		// copy the sequence
 		int idx = 0;
 		Iterator<GeneElement<T>> it = sequence.iterator();
-		while(idx < generatedGene.sequence.length && it.hasNext()) {
-			generatedGene.sequence[idx] = it.next();
+		while(idx < generatedGene.getSequenceLength() && it.hasNext()) {
+			generatedGene.setSequenceAt(idx, it.next());
 			idx++;
 		}
 		

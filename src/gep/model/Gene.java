@@ -5,9 +5,9 @@ import java.util.Deque;
 
 public class Gene<T> {
 
-	final public GeneElement<T>[] sequence; // TODO maybe optimize by using
-											// arrays
-											// of int (index structure)
+	final private GeneElement<T>[] sequence; // TODO maybe optimize by using
+												// arrays
+												// of int (index structure)
 	// TODO maybe do explicit separation in head and tail
 
 	public final GeneArchitecture<T> architecture;
@@ -36,7 +36,7 @@ public class Gene<T> {
 		System.arraycopy(other.sequence, 0, sequence, 0, sequence.length);
 		this.expressionTreeCache = null;
 	}
-	
+
 	/**
 	 * Copies the sequence from the given other Gene into this one. This
 	 * requires that both Genes share the exact same architecture.
@@ -70,7 +70,9 @@ public class Gene<T> {
 	 * of this gene. The ExpressionTree will only contain those gene elements
 	 * which are in the coding region of the Gene.
 	 * 
-	 * @param chromosome The chromosome that contains this gene (TODO better description??)
+	 * @param chromosome
+	 *            The chromosome that contains this gene (TODO better
+	 *            description??)
 	 * 
 	 * @return The ExpressionTree encoded by this Gene in its current
 	 *         configuration.
@@ -98,6 +100,60 @@ public class Gene<T> {
 
 		expressionTreeCache = etnRoot;
 		return etnRoot;
+	}
+
+	/**
+	 * Returns the element in the sequence at the given index
+	 * 
+	 * @param idx
+	 *            The elements index
+	 * @return The element at the given index
+	 */
+	public GeneElement<T> sequenceAt(int idx) {
+		return sequence[idx];
+	}
+
+	/**
+	 * Returns the element in the sequence at the given index
+	 * 
+	 * @param idx
+	 *            The elements index
+	 * @return The element at the given index
+	 */
+	public void setSequenceAt(int idx, GeneElement<T> newElement) {
+		sequence[idx] = newElement;
+		// TODO maybe change newElement to idx in architecture
+		this.invalidateExpressionTreeCache();
+	}
+
+	/**
+	 * Sets the sequence of this gene from pos to pos+length to the values given
+	 * in the src array from srcPos to srcPos+length.
+	 * 
+	 * @param pos
+	 *            The start position in the sequence
+	 * @param src
+	 *            The array from which the values should be copied
+	 * @param srcPos
+	 *            The start position in the source array
+	 * @param length
+	 *            The number of elements to be copied by the method
+	 */
+	public void setSequenceIntervall(int pos, GeneElement<T> src[], int srcPos, int length) {
+		System.arraycopy(src, srcPos, sequence, pos, length);
+		this.invalidateExpressionTreeCache();
+	}
+
+	/**
+	 * Returns the length of the genetic sequence (length = length of head +
+	 * length of tail).
+	 * 
+	 * Thus, the length includes non-coding regions of the gene.
+	 * 
+	 * @return The length of the sequence
+	 */
+	public int getSequenceLength() {
+		return sequence.length;
 	}
 
 	/**

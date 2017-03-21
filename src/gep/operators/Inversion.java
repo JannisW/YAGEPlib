@@ -28,9 +28,9 @@ public class Inversion extends GeneticOperator {
 			}
 
 			for (int i = 0; i < (idx2 - idx1 + 1) / 2; i++) {
-				GeneElement<T> tmp = gene.sequence[idx1 + i];
-				gene.sequence[idx1 + i] = gene.sequence[idx2 - i];
-				gene.sequence[idx2 - i] = tmp;
+				GeneElement<T> tmp = gene.sequenceAt(idx1 + i);
+				gene.setSequenceAt(idx1 + i, gene.sequenceAt(idx2 - i));
+				gene.setSequenceAt(idx2 - i, tmp);
 			}
 		}
 

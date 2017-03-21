@@ -15,12 +15,12 @@ public class Mutation extends GeneticOperator {
 
 	@Override
 	public <T> void apply(Gene<T> g) {
-		for (int i = 0; i < g.sequence.length; i++) {
+		for (int i = 0; i < g.getSequenceLength(); i++) {
 			if (random.decideBinaryDecision(super.applicationRate)) {
 				if (g.isPartOfHead(i) && random.decideTakeFunction()) {
-					g.sequence[i] = random.pickElement(g.architecture.potentialFunctions);
+					g.setSequenceAt(i, random.pickElement(g.architecture.potentialFunctions));
 				} else {
-					g.sequence[i] = random.pickElement(g.architecture.potentialTerminals);
+					g.setSequenceAt(i, random.pickElement(g.architecture.potentialTerminals));
 				}
 				g.invalidateExpressionTreeCache();
 			}
