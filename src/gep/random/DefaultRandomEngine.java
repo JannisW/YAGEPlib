@@ -58,4 +58,9 @@ public class DefaultRandomEngine extends Random implements RandomEngine {
 		return super.nextBoolean();
 	}
 
+	@Override
+	public double getDouble() {
+		return super.nextDouble();
+	}
+
 }

@@ -74,7 +74,7 @@ public class GeneArchitecture<T> {
 
 		// generate tail
 		for (int i = this.headLength; i < generatedGene.sequence.length; i++) {
-			generatedGene.sequence[i] = r.pickElement(potentialFunctions);
+			generatedGene.sequence[i] = r.pickElement(potentialTerminals);
 		}
 
 		return generatedGene;

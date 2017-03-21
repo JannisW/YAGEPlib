@@ -2,7 +2,7 @@ package gep.model;
 
 public class HomoeoticGeneElement<T> extends GeneTerminal<T> {
 	
-	private final Gene<T> linkedGene;
+	public final Gene<T> linkedGene;
 
 	public HomoeoticGeneElement(String description, String shortDescription, Gene<T> linkedGene) {
 		super(description, shortDescription);

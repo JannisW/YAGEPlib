@@ -23,10 +23,10 @@ public class Mutation implements GeneticOperator {
 	}
 
 	@Override
-	public void apply(Individual[] individuals) {
-		for (Individual individual : individuals) {
-			for (Chromosome c : individual.chromosomes) {
-				for (Gene g : c.genes) {
+	public <T> void apply(Individual<T>[] individuals) {
+		for (Individual<T> individual : individuals) {
+			for (Chromosome<T> c : individual.chromosomes) {
+				for (Gene<T> g : c.genes) {
 					for (int i = 0; i < g.sequence.length; i++) {
 						if (random.decideBinaryDecision(mutationRate)) {
 							if (g.isPartOfHead(i) && random.decideTakeFunction()) {
@@ -34,6 +34,7 @@ public class Mutation implements GeneticOperator {
 							} else {
 								g.sequence[i] = random.pickElement(g.architecture.potentialTerminals);
 							}
+							g.invalidateExpressionTreeCache();
 						}
 					}
 				}

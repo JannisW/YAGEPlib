@@ -30,6 +30,13 @@ public class Gene<T> {
 		this.sequence = new GeneElement[arch.getGeneLength()];
 	}
 
+	public Gene(Gene<T> other) {
+		this.architecture = other.architecture;
+		this.sequence = new GeneElement[other.sequence.length];
+		System.arraycopy(other.sequence, 0, sequence, 0, sequence.length);
+		this.expressionTreeCache = null;
+	}
+	
 	/**
 	 * Copies the sequence from the given other Gene into this one. This
 	 * requires that both Genes share the exact same architecture.
@@ -41,7 +48,8 @@ public class Gene<T> {
 		if (this.architecture != other.architecture) {
 			throw new IllegalArgumentException("The gene architecture has to be identical!");
 		}
-		System.arraycopy(sequence, 0, other.sequence, 0, sequence.length);
+		System.arraycopy(other.sequence, 0, sequence, 0, sequence.length);
+		expressionTreeCache = null;
 	}
 
 	/**

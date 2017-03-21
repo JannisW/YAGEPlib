@@ -10,7 +10,7 @@ public interface GeneticOperator {
 	 * @param individuals
 	 *            The set of individuals
 	 */
-	void apply(Individual[] individuals);
+	<T> void apply(Individual<T>[] individuals);
 
 	/**
 	 * Returns the rate with which this operator is applied

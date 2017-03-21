@@ -42,4 +42,11 @@ public interface RandomEngine {
 	 * @return true, if the decision is yes. False, otherwise.
 	 */
 	boolean decideBinaryDecision();
+
+	/**
+	 * Returns a double between 0.0 and 1.0.
+	 * 
+	 * @return a double between 0.0 and 1.0
+	 */
+	double getDouble();
 }

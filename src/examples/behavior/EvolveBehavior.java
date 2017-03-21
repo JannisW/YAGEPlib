@@ -9,6 +9,7 @@ import examples.behavior.functions.SelectorFunction;
 import examples.behavior.functions.SequenceFunction;
 import examples.behavior.terminals.EmptyInFrontCheckTerminal;
 import examples.behavior.terminals.FoodInFrontCheckTerminal;
+import examples.behavior.terminals.PheroInFrontCheckTerminal;
 import examples.behavior.terminals.StepTerminal;
 import examples.behavior.terminals.TurnLeftTerminal;
 import examples.behavior.terminals.TurnRightTerminal;
@@ -43,7 +44,7 @@ public class EvolveBehavior {
 			e.printStackTrace();
 			return;
 		}
-		System.out.println("done ( " + maps.size() + " maps created)");
+		System.out.println("done (" + maps.size() + " map(s) created)");
 		EvaluationEnvironment env = new EvaluationEnvironment(maps);
 
 		ArrayList<GeneFunction<Boolean>> supportedBehaviorTreeNodes = new ArrayList<GeneFunction<Boolean>>(3);
@@ -52,13 +53,14 @@ public class EvolveBehavior {
 		supportedBehaviorTreeNodes.add(new InversionFunction());
 		// TODO support more nodes (including random)
 
-		ArrayList<GeneTerminal<Boolean>> potentialTerminals = new ArrayList<GeneTerminal<Boolean>>(6);
+		ArrayList<GeneTerminal<Boolean>> potentialTerminals = new ArrayList<GeneTerminal<Boolean>>(7);
 		potentialTerminals.add(new StepTerminal(env));
 		potentialTerminals.add(new TurnLeftTerminal(env));
 		potentialTerminals.add(new TurnRightTerminal(env));
 		potentialTerminals.add(new WallInFrontCheckTerminal(env));
 		potentialTerminals.add(new FoodInFrontCheckTerminal(env));
 		potentialTerminals.add(new EmptyInFrontCheckTerminal(env));
+		potentialTerminals.add(new PheroInFrontCheckTerminal(env));
 
 		// TODO maybe create meta structure which allows more readable
 		// specification of terminals + function (which might get translated to

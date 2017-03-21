@@ -3,7 +3,10 @@ package gep.model;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Deque;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import gep.random.RandomEngine;
 
@@ -87,6 +90,36 @@ public class ChromosomalArchitecture<T> {
 		}
 		
 		return GeneArchitecture.createGeneFromSequence(sequence, false);
+	}
+	
+	private Chromosome<T> create() {
+		
+		Deque<Gene<T>> unresolvedDependenciesStack = new ArrayDeque<>();
+		Set<Gene<T>> unresolvedDependenciesSet = new HashSet<Gene<T>>();
+		unresolvedDependenciesStack.push(rootGene);
+		unresolvedDependenciesSet.add(rootGene);
+		
+		HashMap<Gene<T>, Gene<T>> geneCopyMapping = new HashMap<>();
+		
+		while(!unresolvedDependenciesStack.isEmpty()) {
+			Gene<T> curr = unresolvedDependenciesStack.peek();
+			
+			List<GeneTerminal<T>> potTerminals = curr.architecture.potentialTerminals;
+			
+			boolean dependencyFound = false;
+			for (GeneTerminal<T> potTerminal : potTerminals) {
+				if(potTerminal instanceof HomoeoticGeneElement) {
+					HomoeoticGeneElement<T> link = (HomoeoticGeneElement<T>) potTerminal;
+					if(unresolvedDependenciesSet.add(link.linkedGene)) {
+						// new dependency found
+						unresolvedDependenciesStack.push(link.linkedGene);
+						dependencyFound = true;
+					}
+				}
+			}
+		}
+		
+		
 	}
 
 

@@ -11,11 +11,15 @@ public class GeneExpressionProgramming {
 		double fitnessOfBestIndividual;
 		int currentGeneration = 0;
 
+		System.out.println("Start GEP evolution...");
+
 		do {
 			fitnessOfBestIndividual = fe.evaluateFitness(population);
 			sm.select(population);
 			re.reproduce(population);
 			currentGeneration++;
+			System.out.println(
+					"Finished generation " + currentGeneration + " (Best fitness: " + fitnessOfBestIndividual + ")");
 		} while (fitnessOfBestIndividual < targetFitness && currentGeneration <= maxNumGenerations);
 
 	}

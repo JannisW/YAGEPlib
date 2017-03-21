@@ -27,7 +27,7 @@ public class ReproductionEnvironment {
 		operators.add(op);
 	}
 
-	public void reproduce(Individual[] individuals) {
+	public <T> void reproduce(Individual<T>[] individuals) {
 		for (GeneticOperator geneticOperator : operators) {
 			geneticOperator.apply(individuals);
 		}

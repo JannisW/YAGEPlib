@@ -10,8 +10,9 @@ import gep.model.ExpressionTreeNode;
 import gep.model.Individual;
 
 public class EvaluationEnvironment extends FitnessEnvironment<Boolean> {
-	
+
 	final static int MAX_NUMBER_OF_SIMULATION_TICKS = 40;
+	final static double START_FITNESS = 100.0;
 
 	private int posAgentX;
 	private int posAgentY;
@@ -22,8 +23,9 @@ public class EvaluationEnvironment extends FitnessEnvironment<Boolean> {
 
 	private int foodConsumed = 0;
 
-	private double currentFitnessScore = 0.0;
-	
+	// start with a budget of possible wrong moves.
+	private double currentFitnessScore = START_FITNESS;
+
 	// the different maps (fitness cases) for generalization
 	private final WorldMap[] maps;
 
@@ -46,9 +48,10 @@ public class EvaluationEnvironment extends FitnessEnvironment<Boolean> {
 	 * @return true, if the move was successful, false otherwise.
 	 */
 	public boolean moveTo(int x, int y) {
+		//System.out.println("CALLED");
 		if (grid[x][y].isWall()) {
 			// give penalty for actually try to move on a field with a wall.
-			currentFitnessScore--;
+			currentFitnessScore = Math.max(0, currentFitnessScore - 2);
 			return false;
 		}
 		posAgentX = x;
@@ -56,7 +59,10 @@ public class EvaluationEnvironment extends FitnessEnvironment<Boolean> {
 		if (grid[x][y].isFood()) {
 			grid[x][y].removeFood();
 			foodConsumed++;
-			currentFitnessScore += 10;
+			currentFitnessScore += 22;
+		} else {
+			// every valid step gives a plus point (makes the agent move)
+			currentFitnessScore++;
 		}
 		return true;
 	}
@@ -102,35 +108,46 @@ public class EvaluationEnvironment extends FitnessEnvironment<Boolean> {
 
 	@Override
 	protected double evaluateFitness(Individual<Boolean> individual) {
-		
-		this.currentFitnessScore = 0.0;
-		
-		for(WorldMap map : maps) {
-			
+
+		resetFitnessScore();
+
+		for (WorldMap map : maps) {
+
 			grid = map.initMap();
 			posAgentX = map.getStartPositionX();
 			posAgentY = map.getStartPositionY();
 			agentOrientation = map.getStartOrientation();
-		
+
 			// single chromosome individuals (only one program)
 			ExpressionTreeNode<Boolean> currentProgram = individual.getExpressionTrees().get(0);
-			
+
 			int numberOfTicks = 0;
-			while(numberOfTicks < MAX_NUMBER_OF_SIMULATION_TICKS ) { // TODO and food is left
-			
+			while (numberOfTicks < MAX_NUMBER_OF_SIMULATION_TICKS) { // TODO and
+																		// food
+																		// is
+																		// left
+
 				boolean executionResult = currentProgram.execute();
-				
-				if(!executionResult) 
-				{
-					//return currentFitnessScore-1; // TODO makes sense?
+
+				if (!executionResult) {
+					// return currentFitnessScore-1; // TODO makes sense?
 				}
+
+				numberOfTicks++; // TODO maybe also couple to number of steps
 			}
-			
+
 		}
 		
+		System.out.println("SCORE: " + currentFitnessScore);
+
 		return this.currentFitnessScore;
-				
-		// TODO check if that makes sense... especially wrt. parallelization etc.
+
+		// TODO check if that makes sense... especially wrt. parallelization
+		// etc.
+	}
+	
+	private void resetFitnessScore() {
+		this.currentFitnessScore = START_FITNESS;
 	}
 
 }
