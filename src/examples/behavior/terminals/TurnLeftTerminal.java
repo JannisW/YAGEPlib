@@ -19,12 +19,16 @@ public class TurnLeftTerminal extends ChromosomeIndependentGeneTerminal<Boolean>
 		switch(oldAgentOrientation) { // TODO replace switch-case to modulo add/subtract mechanism  
 		case NORTH:
 			env.agentOrientation = Orientation.WEST;
+			break;
 		case EAST:
 			env.agentOrientation = Orientation.NORTH;
+			break;
 		case SOUTH:
 			env.agentOrientation = Orientation.EAST;
+			break;
 		case WEST:
 			env.agentOrientation = Orientation.SOUTH;
+			break;
 		}
 		return true;
 	}
