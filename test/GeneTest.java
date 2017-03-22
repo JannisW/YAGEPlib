@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.junit.Test;
 
+import gep.model.ChromosomalArchitecture;
 import gep.model.Chromosome;
 import gep.model.ChromosomeIndependentGeneTerminal;
 import gep.model.ExpressionTreeNode;
@@ -47,58 +48,62 @@ public class GeneTest {
 		gene.setSequenceAt(3, potentialTerminals.get(0));
 		gene.setSequenceAt(4, twoArgFunc3);
 		gene.setSequenceAt(5, twoArgFunc4);
-		for(int i = 6; i < geneLength; i++){
-			gene.setSequenceAt(i, potentialTerminals.get(i-5));
+		for (int i = 6; i < geneLength; i++) {
+			gene.setSequenceAt(i, potentialTerminals.get(i - 5));
 		}
-		
-		Chromosome<Boolean> c = new Chromosome<>(gene);
-		ExpressionTreeNode<Boolean> etn = gene.express(c);	
+
+		Chromosome<Boolean> c = ChromosomalArchitecture.createSingleGenicChromosome(gene);
+
+		// TODO check expression tree returned by the chromosome as well (not
+		// just tree returned by the gene)
+
+		ExpressionTreeNode<Boolean> etn = gene.express(c);
 
 		System.out.println(etn);
-		
+
 		// check root
 		assertEquals(twoArgFunc1, etn.getNodeElement());
-		
+
 		// check first level
 		List<ExpressionTreeNode<Boolean>> currChildren = etn.getChildren();
 		assertEquals(2, currChildren.size());
 		assertEquals(twoArgFunc2, currChildren.get(0).getNodeElement());
 		assertEquals(oneArgFunc, currChildren.get(1).getNodeElement());
-		
+
 		// check second level
 		currChildren = etn.getChildren().get(0).getChildren();
 		assertEquals(2, currChildren.size());
 		assertEquals(potentialTerminals.get(0), currChildren.get(0).getNodeElement());
 		assertEquals(twoArgFunc3, currChildren.get(1).getNodeElement());
-		
+
 		currChildren = etn.getChildren().get(1).getChildren();
 		assertEquals(1, currChildren.size());
 		assertEquals(twoArgFunc4, currChildren.get(0).getNodeElement());
-		
+
 		// check third level
 		currChildren = etn.getChildren().get(0).getChildren().get(0).getChildren();
 		assertEquals(0, currChildren.size());
-		
+
 		currChildren = etn.getChildren().get(0).getChildren().get(1).getChildren();
 		assertEquals(2, currChildren.size());
 		assertEquals(potentialTerminals.get(1), currChildren.get(0).getNodeElement());
 		assertEquals(potentialTerminals.get(2), currChildren.get(1).getNodeElement());
 		assertEquals(0, currChildren.get(0).getChildren().size());
 		assertEquals(0, currChildren.get(1).getChildren().size());
-		
+
 		currChildren = etn.getChildren().get(1).getChildren().get(0).getChildren();
 		assertEquals(2, currChildren.size());
 		assertEquals(potentialTerminals.get(3), currChildren.get(0).getNodeElement());
 		assertEquals(potentialTerminals.get(4), currChildren.get(1).getNodeElement());
 		assertEquals(0, currChildren.get(0).getChildren().size());
 		assertEquals(0, currChildren.get(1).getChildren().size());
-		
+
 	}
 
 	class GenericOneArgFunc extends GeneFunction<Boolean> {
 
 		public GenericOneArgFunc(int id) {
-			super("generic one arg func (ID="+id+")", "o"+id, 1);
+			super("generic one arg func (ID=" + id + ")", "o" + id, 1);
 		}
 
 		@Override
@@ -112,7 +117,7 @@ public class GeneTest {
 	class GenericTwoArgFunc extends GeneFunction<Boolean> {
 
 		public GenericTwoArgFunc(int id) {
-			super("generic two arg func (ID="+id+")", "d"+id, 2);
+			super("generic two arg func (ID=" + id + ")", "d" + id, 2);
 		}
 
 		@Override
@@ -126,7 +131,7 @@ public class GeneTest {
 	class GenericTerminal extends ChromosomeIndependentGeneTerminal<Boolean> {
 
 		public GenericTerminal(int id) {
-			super("generic terminal(ID="+id+")", "t"+id);
+			super("generic terminal(ID=" + id + ")", "t" + id);
 		}
 
 		@Override

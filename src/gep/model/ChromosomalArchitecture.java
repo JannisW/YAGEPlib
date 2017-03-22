@@ -9,12 +9,14 @@ import gep.random.RandomEngine;
 
 /**
  * 
- * @author jannis
+ * @author Johannes Wortmann
  * 
  *         TODO maybe delete ChromosomalArchitecture class and move contents to
  *         Chromosome
  *
  * @param <T>
+ *            The return parameter type of the GeneElements contained in the
+ *            created genes of the Chromosomes created by this factory.
  */
 public class ChromosomalArchitecture<T> {
 
@@ -77,9 +79,10 @@ public class ChromosomalArchitecture<T> {
 		}
 	}
 
-	/** 
+	/**
 	 * 
-	 * TODO adjust because not longer usable (expressiontree requires chromosome)...
+	 * TODO adjust because not longer usable (expressiontree requires
+	 * chromosome)...
 	 * 
 	 * @param etn
 	 */
@@ -133,6 +136,28 @@ public class ChromosomalArchitecture<T> {
 
 		return new Chromosome<T>(generatedGenes, immutableGenes, generatedRoot);
 
+	}
+
+	/**
+	 * Creates a Chromosome that only contains one modifiable Gene and no
+	 * unmodifiable. To create another kind of Chromosomes use the non static
+	 * methods of this class.
+	 * 
+	 * @param gene
+	 *            The contained modifiable gene.
+	 */
+	@SuppressWarnings("unchecked")
+	public static <T> Chromosome<T> createSingleGenicChromosome(Gene<T> gene) {
+		ArrayList<HomoeoticGeneElement<T>> link = new ArrayList<>();
+
+		// Link to the provided gene which gets the gene id 1 (0 is the dummy
+		// linking function)
+		link.add(new HomoeoticGeneElement<T>("dummy static link", "dsl", 1));
+
+		GeneArchitecture<T> rootAarch = new GeneArchitecture<T>(1, new ArrayList<>(), link);
+		Gene<T> generatedRoot = rootAarch.createRandomGene();
+
+		return new Chromosome<T>(new Gene[] { new Gene<T>(gene) }, new Gene[] {}, generatedRoot);
 	}
 
 	/*

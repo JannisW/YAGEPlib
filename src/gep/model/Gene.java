@@ -30,6 +30,13 @@ public class Gene<T> {
 		this.sequence = new GeneElement[arch.getGeneLength()];
 	}
 
+	/**
+	 * Creates a new Gene with the copied (shallow) sequence and the same
+	 * architecture as the provided gene.
+	 * 
+	 * @param other
+	 *            The gene to be copied.
+	 */
 	public Gene(Gene<T> other) {
 		this.architecture = other.architecture;
 		this.sequence = new GeneElement[other.sequence.length];
@@ -111,6 +118,24 @@ public class Gene<T> {
 	 */
 	public GeneElement<T> sequenceAt(int idx) {
 		return sequence[idx];
+	}
+
+	/**
+	 * Returns the subsequence specified by the parameters as a shallow copy
+	 * 
+	 * @param startIdx
+	 *            The start index of the subsequence
+	 * @param length
+	 *            The length of the subsequence
+	 * @return The subsequence as a shallow copy
+	 * 
+	 * @throws IndexOutOfBoundsException
+	 *             - if copying would cause access of data outside array bounds.
+	 */
+	public GeneElement<T>[] getSubsequence(int startIdx, int length) {
+		GeneElement<T>[] res = new GeneElement[length];
+		System.arraycopy(sequence, startIdx, res, 0, length);
+		return res;
 	}
 
 	/**

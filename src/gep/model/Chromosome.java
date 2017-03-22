@@ -1,16 +1,18 @@
 package gep.model;
 
 /**
- * TODO class useful?
+ * This class implements a Chromosome, which is basically a collection of
+ * modifiable and unmodifiable genes linked by a linking function.
  * 
- * @author jannis
+ * @author Johannes Wortmann
  * 
- *         TODO allow various types within one Chromosome (e.g.
- *         UntypedChromosome as a subclass or the need to provide conversion
- *         functions)
+ * @param <T>
+ *            The return parameter type of the GeneElements contained in this
+ *            Chromosomes genes.
  * 
- *         TODO speedup creation currently lists are copied on construction...
- *
+ *            TODO allow various types within one Chromosome (e.g.
+ *            UntypedChromosome as a subclass or the need to provide conversion
+ *            functions).
  */
 public class Chromosome<T> {
 
@@ -18,9 +20,10 @@ public class Chromosome<T> {
 	 * The collection of modifiable genes of the chromosome
 	 */
 	public final Gene<T>[] genes;
-	
+
 	/**
-	 * The immutable genes of the chromosome (e.g. immutable sub linking constructs)
+	 * The immutable genes of the chromosome (e.g. immutable sub linking
+	 * constructs)
 	 */
 	private final Gene<T>[] immutableGenes;
 
@@ -30,24 +33,32 @@ public class Chromosome<T> {
 	private final Gene<T> staticLinkingFunction;
 
 	/**
-	 * Creates a Chromosome that only contains one Gene.
+	 * Creates a new Chromosome with the given collections of genes, immutable
+	 * genes and the given linking function.
 	 * 
-	 * @param gene
-	 *            The contained gene.
+	 * It's not recommended to use this contructor directly. Instead use one of
+	 * the methods provided by {@link ChromosomalArchitecture}.
+	 * 
+	 * @param genes
+	 *            An array containing all modifiable genes of the chromosome
+	 * @param immutableGenes
+	 *            An array containing all unmodifiable genes of the chromosome
+	 * @param linkingFunction
+	 *            The chromosomes linking function encoded as gene
 	 */
-	@SuppressWarnings("unchecked")
-	public Chromosome(Gene<T> gene) {
-		this.genes = new Gene[0];
-		this.immutableGenes = new Gene[0];
-		this.staticLinkingFunction = gene;
-	}
-
-	public Chromosome(Gene<T>[] genes, Gene<T>[] immutableGenes, Gene<T> linkingFunction) {
+	Chromosome(Gene<T>[] genes, Gene<T>[] immutableGenes, Gene<T> linkingFunction) {
 		this.genes = genes;
 		this.immutableGenes = immutableGenes;
 		this.staticLinkingFunction = linkingFunction;
 	}
 
+	/**
+	 * Creates a new Chromosome with the copied genes and linking function from
+	 * the provided other Chromosome.
+	 * 
+	 * @param other
+	 *            The Chromosome to be copied.
+	 */
 	@SuppressWarnings("unchecked")
 	public Chromosome(Chromosome<T> other) {
 		this.genes = new Gene[other.genes.length];
@@ -63,17 +74,30 @@ public class Chromosome<T> {
 		this.staticLinkingFunction = new Gene<T>(other.staticLinkingFunction);
 	}
 
+	/**
+	 * Expresses this Chromosome. This means this function creates and returns
+	 * the ExpressionTree that encodes all the coding regions of this
+	 * Chromosome.
+	 * 
+	 * @return The Chromosomes ExpressionTree
+	 */
 	public ExpressionTreeNode<T> express() {
 		ExpressionTreeNode<T> rootEtn = staticLinkingFunction.express(this);
 		return rootEtn;
 	}
 
 	/**
-	 * GeneId: = 0 linking function, > 0 normal gene (ascending) < 0 immutable
-	 * gene (ascending, when negate)
+	 * Returns the gene of this Chromosome corresponding to the given gene id.
+	 * 
+	 * <pre>
+	 * GeneId: = 0 linking function, 
+	 *         > 0 normal gene (ascending) 
+	 *         < 0 immutable gene (ascending, after id negation)
+	 * </pre>
 	 * 
 	 * @param geneId
-	 * @return
+	 *            The gene's id
+	 * @return The corresponding gene
 	 */
 	public Gene<T> getGene(int geneId) {
 		if (geneId == 0) {
