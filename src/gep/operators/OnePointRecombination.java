@@ -2,16 +2,17 @@ package gep.operators;
 
 import gep.model.Chromosome;
 import gep.model.Gene;
+import gep.model.GeneElement;
 import gep.model.Individual;
 import gep.random.RandomEngine;
 
-public class GeneRecombination extends GeneticOperator {
+public class OnePointRecombination extends GeneticOperator {
 
-	public GeneRecombination(double applicationRate) {
+	public OnePointRecombination(double applicationRate) {
 		super(applicationRate);
 	}
 
-	public GeneRecombination(double applicationRate, RandomEngine re) {
+	public OnePointRecombination(double applicationRate, RandomEngine re) {
 		super(applicationRate, re);
 	}
 
@@ -36,13 +37,22 @@ public class GeneRecombination extends GeneticOperator {
 
 					Chromosome<T> parent1Chromosome = individual.chromosomes[cIdx];
 					Chromosome<T> parent2Chromosome = individuals[otherIndiIdx].chromosomes[cIdx];
-
+					
 					int pickedGeneId = random.getInt(0, parent1Chromosome.genes.length);
+					int recombinationPoint = random.getInt(0, parent1Chromosome.genes[pickedGeneId].getSequenceLength());
 
-					// swap the gene
-					Gene<T> tmp = new Gene<T>(parent1Chromosome.genes[pickedGeneId]);
-					parent1Chromosome.genes[pickedGeneId] = parent2Chromosome.genes[pickedGeneId];
-					parent2Chromosome.genes[pickedGeneId] = tmp;
+					int len = parent1Chromosome.genes[pickedGeneId].getSequenceLength() - recombinationPoint;
+					GeneElement<T>[] tmpGenePart = parent1Chromosome.genes[pickedGeneId].getSubsequence(recombinationPoint, len);
+					parent1Chromosome.genes[pickedGeneId].setSequenceIntervall(recombinationPoint, parent2Chromosome.genes[pickedGeneId].getSubsequence(recombinationPoint, len), 0, len);
+					parent2Chromosome.genes[pickedGeneId].setSequenceIntervall(recombinationPoint, tmpGenePart, 0, len);
+					
+					
+					for(int gIdx = pickedGeneId+1; gIdx < parent1Chromosome.genes.length; gIdx++) {
+						// swap the gene
+						Gene<T> tmp = new Gene<T>(parent1Chromosome.genes[gIdx]);
+						parent1Chromosome.genes[gIdx] = parent2Chromosome.genes[gIdx];
+						parent2Chromosome.genes[gIdx] = tmp;
+					}
 				}
 
 			}
@@ -57,7 +67,8 @@ public class GeneRecombination extends GeneticOperator {
 
 	@Override
 	public String getName() {
-		return "Gene recombination";
+		return "One point recombination";
 	}
+
 
 }
