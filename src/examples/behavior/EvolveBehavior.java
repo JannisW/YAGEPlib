@@ -197,9 +197,12 @@ public class EvolveBehavior {
 		re.addGeneticOperator(new TwoPointRecombination(0.5));
 
 		SelectionMethod sm = new RouletteWheelSelectionWithElitePreservation(0.05);
+		
+		GeneExpressionProgramming.run(population, env, sm, re, 1,
+						44.0 /* Best value for classic map */);
 
-		GeneExpressionProgramming.run(population, env, sm, re, MAX_NUM_GENERATIONS,
-				44.0 /* Best value for classic map */);
+		//GeneExpressionProgramming.run(population, env, sm, re, MAX_NUM_GENERATIONS,
+		//		44.0 /* Best value for classic map */);
 	}
 
 }
