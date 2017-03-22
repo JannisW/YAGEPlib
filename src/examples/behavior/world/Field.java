@@ -42,4 +42,8 @@ public class Field {
 	public void removeFood() {
 		properties = properties & (~FOOD_MASK);
 	}
+	
+	public int getProperties() {
+		return properties;
+	}
 }

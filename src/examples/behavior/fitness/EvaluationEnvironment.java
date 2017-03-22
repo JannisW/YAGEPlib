@@ -75,7 +75,7 @@ public class EvaluationEnvironment extends FitnessEnvironment<Boolean> {
 			foodConsumed++;
 			fitnessFunction.applyFoodConsumedBonus();
 		}
-		
+
 		movedDistance++;
 		return true;
 	}

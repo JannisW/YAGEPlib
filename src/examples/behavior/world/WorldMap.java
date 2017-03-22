@@ -20,6 +20,7 @@ public class WorldMap {
 
 	public WorldMap(Path pathToFile) throws IOException {
 		readFromFile(pathToFile);
+		printCurrentMapState();
 	}
 
 	public WorldMap(final int dimX, final int dimY) {
@@ -80,7 +81,7 @@ public class WorldMap {
 		for (Field field : foodFields) {
 			field.setFood();
 		}
-		
+
 		// TODO redistribute other stuff
 
 		return grid;
@@ -143,8 +144,15 @@ public class WorldMap {
 			} while (line.isEmpty());
 
 			// parse map
-			int y = 0;
+			int y = dimY - 1;
 			while (line != null) {
+
+				if (y < 0) {
+					throw new IllegalArgumentException(
+							"File format violation: to many entries in y direction of the map (expected" + dimY
+									+ " ).");
+				}
+
 				String tokens[] = line.split(" ");
 
 				if (tokens.length != dimX) {
@@ -154,31 +162,31 @@ public class WorldMap {
 
 				for (int x = 0; x < dimX; x++) {
 					int properties;
-					if(tokens[x].equals("#")) {
+					if (tokens[x].equals("#")) {
 						properties = Field.WALL_MASK;
 					} else {
 						properties = Integer.parseInt(tokens[x]);
 					}
 					Field f = new Field(properties);
 					grid[x][y] = f;
-					if(f.isFood()) {
+					if (f.isFood()) {
 						foodFields.add(f);
 					}
 				}
 
-				y++;
+				y--;
 
 				do {
 					// not the most efficient solution but unless reading large
 					// files negligible.
 					line = br.readLine();
-					if(line == null) {
+					if (line == null) {
 						break;
 					}
 					line = normalizeLine(line);
 					numLinesRead++;
 				} while (line.isEmpty());
-				
+
 			}
 		}
 	}
@@ -193,6 +201,46 @@ public class WorldMap {
 			line = line.substring(0, commentMarker);
 		}
 		return line.trim();
+	}
+
+	public void printCurrentMapState() {
+		printCurrentMapState(startX, startY, startOrientation);
+	}
+		
+	public void printCurrentMapState(int agentX, int agentY, Orientation agentOrientation) {
+		System.out.println();
+		for (int y = grid.length - 1; y >= 0; y--) {
+			System.out.print(y + "\t");
+			for (int x = 0; x < grid[0].length; x++) {
+				String fieldStr;
+				if (grid[x][y].isWall()) {
+					fieldStr = "# ";
+				} else if(x == agentX && agentY == y) {
+					fieldStr = getAgentChar(agentOrientation) + " ";
+				} else if (grid[x][y].isEmpty()) {
+					fieldStr = "  ";
+				} else {
+					fieldStr = grid[x][y].getProperties() + " ";
+				}
+				System.out.print(fieldStr);
+			}
+			System.out.println();
+		}
+		System.out.println();
+	}
+	
+	private static char getAgentChar(final Orientation orientation) {
+		switch (orientation) {
+		case NORTH:
+			return '^';
+		case EAST:
+			return '>';
+		case SOUTH:
+			return 'V';
+		case WEST:
+			return '<';
+		}
+		throw new IllegalArgumentException("invalid orientation");
 	}
 
 }
