@@ -16,7 +16,7 @@ public class EvaluationEnvironment extends FitnessEnvironment<Boolean> {
 
 	private int posAgentX;
 	private int posAgentY;
-	public Orientation agentOrientation;
+	private Orientation agentOrientation;
 
 	// TODO maybe change 2d array to 1d array
 	public Field[][] grid;
@@ -36,6 +36,8 @@ public class EvaluationEnvironment extends FitnessEnvironment<Boolean> {
 
 	// the different maps (fitness cases) for generalization
 	private final WorldMap[] maps;
+	
+	private WorldMap currentMap; // TODO resolve redundancy with grid
 
 	public EvaluationEnvironment(ArrayList<WorldMap> maps, BehaviorFitnessFunction fitnessFunctionPerMap) {
 		this.maps = maps.toArray(new WorldMap[maps.size()]);
@@ -75,8 +77,10 @@ public class EvaluationEnvironment extends FitnessEnvironment<Boolean> {
 			foodConsumed++;
 			fitnessFunction.applyFoodConsumedBonus();
 		}
-
+		
 		movedDistance++;
+
+		currentMap.printCurrentMapState(posAgentX, posAgentY, agentOrientation);
 		return true;
 	}
 
@@ -98,6 +102,17 @@ public class EvaluationEnvironment extends FitnessEnvironment<Boolean> {
 		return posAgentY;
 	}
 
+	public Orientation getAgentOrientation() {
+		return agentOrientation;
+	}
+
+	public void setAgentOrientation(Orientation agentOrientation) {
+		if(this.agentOrientation != agentOrientation) {
+			currentMap.printCurrentMapState(posAgentX, posAgentY, agentOrientation);
+		}
+		this.agentOrientation = agentOrientation;
+	}
+
 	/**
 	 * Returns the field in front of the agent. Assumes that the field is
 	 * surrounded by walls and that the agent is never located there.
@@ -105,7 +120,7 @@ public class EvaluationEnvironment extends FitnessEnvironment<Boolean> {
 	 * @return the field in front of the agent
 	 */
 	public Field getFieldInFront() {
-		switch (agentOrientation) {
+		switch (getAgentOrientation()) {
 		case NORTH:
 			return grid[posAgentX][posAgentY + 1];
 		case EAST:
@@ -128,11 +143,13 @@ public class EvaluationEnvironment extends FitnessEnvironment<Boolean> {
 
 			fitnessFunction.resetFitnessScorePerMap();
 			foodConsumed = 0;
+			
+			currentMap = map;
 
 			grid = map.initMap();
 			posAgentX = map.getStartPositionX();
 			posAgentY = map.getStartPositionY();
-			agentOrientation = map.getStartOrientation();
+			setAgentOrientation(map.getStartOrientation());
 
 			// single chromosome individuals (only one program)
 			ExpressionTreeNode<Boolean> currentProgram = individual.getExpressionTrees().get(0);

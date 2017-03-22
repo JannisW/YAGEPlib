@@ -15,19 +15,19 @@ public class TurnRightTerminal extends ChromosomeIndependentGeneTerminal<Boolean
 
 	@Override
 	public Boolean apply() {
-		final Orientation oldAgentOrientation = env.agentOrientation;
+		final Orientation oldAgentOrientation = env.getAgentOrientation();
 		switch(oldAgentOrientation) { // TODO replace switch-case to modulo add/subtract mechanism  
 		case NORTH:
-			env.agentOrientation = Orientation.EAST;
+			env.setAgentOrientation(Orientation.EAST);
 			break;
 		case EAST:
-			env.agentOrientation = Orientation.SOUTH;
+			env.setAgentOrientation(Orientation.SOUTH);
 			break;
 		case SOUTH:
-			env.agentOrientation = Orientation.WEST;
+			env.setAgentOrientation(Orientation.WEST);
 			break;
 		case WEST:
-			env.agentOrientation = Orientation.NORTH;
+			env.setAgentOrientation(Orientation.NORTH);
 			break;
 		}
 		return true;

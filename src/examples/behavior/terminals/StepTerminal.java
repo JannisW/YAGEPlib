@@ -15,7 +15,7 @@ public class StepTerminal extends ChromosomeIndependentGeneTerminal<Boolean> {
 
 	@Override
 	public Boolean apply() {
-		final Orientation oldAgentOrientation = env.agentOrientation;
+		final Orientation oldAgentOrientation = env.getAgentOrientation();
 		switch (oldAgentOrientation) { // TODO replace switch-case to modulo add/subtract mechanism
 		case NORTH:
 			return env.moveTo(env.getPosAgentX(), env.getPosAgentY() + 1);
@@ -24,7 +24,7 @@ public class StepTerminal extends ChromosomeIndependentGeneTerminal<Boolean> {
 		case SOUTH:
 			return env.moveTo(env.getPosAgentX(), env.getPosAgentY() - 1);
 		case WEST:
-			return env.moveTo(env.getPosAgentX() - 1, env.getPosAgentY() + 1);
+			return env.moveTo(env.getPosAgentX() - 1, env.getPosAgentY());
 		}
 		return true;
 	}
