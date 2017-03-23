@@ -52,7 +52,7 @@ public class GeneRecombination extends GeneticOperator {
 	@Override
 	protected <T> void apply(Gene<T> gene) {
 		// can't be called => method stub!
-		throw new UnsupportedOperationException("This operator works on chromosome level");
+		throw new UnsupportedOperationException("This operator works on population level");
 	}
 
 	@Override
