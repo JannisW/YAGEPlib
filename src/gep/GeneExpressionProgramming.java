@@ -27,15 +27,19 @@ public class GeneExpressionProgramming {
 		int currentGeneration = 0;
 
 		System.out.println("Start GEP evolution...");
+		fitnessOfBestIndividual = fe.evaluateFitness(population);
+		System.out.println(
+				" Initial generation " + currentGeneration + " (Best fitness: " + fitnessOfBestIndividual + ")");
 
 		do {
-			fitnessOfBestIndividual = fe.evaluateFitness(population);
 			int modStartIdx = sm.select(population);
 			re.reproduce(population, modStartIdx);
+			fitnessOfBestIndividual = fe.evaluateFitness(population);
 			currentGeneration++;
 			System.out.println(
 					"Finished generation " + currentGeneration + " (Best fitness: " + fitnessOfBestIndividual + ")");
-		} while (fitnessOfBestIndividual < targetFitness && currentGeneration <= maxNumGenerations);
+
+		} while (fitnessOfBestIndividual < targetFitness && currentGeneration < maxNumGenerations);
 
 	}
 

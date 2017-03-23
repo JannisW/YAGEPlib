@@ -58,7 +58,8 @@ public class RouletteWheelSelectionWithElitePreservation implements SelectionMet
 		final Individual<T>[] oldPopulation = Arrays.copyOf(population, population.length);
 
 		final int numElitesPreserved = Math.max(1, (int) (population.length * preservationPercentage));
-		PriorityQueue<Integer> eliteIdx = new PriorityQueue<>(numElitesPreserved, new IndexedIndividualComparator<>(oldPopulation));
+		PriorityQueue<Integer> eliteIdx = new PriorityQueue<>(numElitesPreserved,
+				new IndexedIndividualComparator<>(oldPopulation));
 
 		double comulativeFitness[] = new double[population.length];
 		comulativeFitness[0] = population[0].getFitness();
@@ -70,7 +71,7 @@ public class RouletteWheelSelectionWithElitePreservation implements SelectionMet
 			comulativeFitness[i] = comulativeFitness[i - 1] + population[i].getFitness();
 			if (eliteIdx.size() == numElitesPreserved) {
 				// priority queue is full
-				if (oldPopulation[eliteIdx.peek()].compareTo(population[i]) < 0) {
+				if (oldPopulation[eliteIdx.peek()].compareTo(oldPopulation[i]) < 0) {
 					// the worst individual of the elite is worse than the
 					// current individual
 					// => replace it by the current one
@@ -83,7 +84,7 @@ public class RouletteWheelSelectionWithElitePreservation implements SelectionMet
 		}
 
 		// preserve elite
-		for (int i = 0; i < numElitesPreserved; i++) {
+		for (int i = numElitesPreserved - 1; i >= 0; i--) {
 			final int idx = eliteIdx.poll();
 			population[i] = oldPopulation[idx];
 			isPartOfNewPopulation[idx] = true;
@@ -104,7 +105,7 @@ public class RouletteWheelSelectionWithElitePreservation implements SelectionMet
 				isPartOfNewPopulation[idx] = true;
 			}
 		}
-		
+
 		return numElitesPreserved;
 	}
 

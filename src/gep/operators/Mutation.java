@@ -37,7 +37,6 @@ public class Mutation extends GeneticOperator {
 				} else {
 					g.setSequenceAt(i, random.pickElement(g.architecture.potentialTerminals));
 				}
-				g.invalidateExpressionTreeCache();
 			}
 		}
 
