@@ -33,8 +33,8 @@ public class GeneArchitecture<T> {
 		if (potentialTerminals.isEmpty()) {
 			throw new IllegalArgumentException("The set of terminals can't be empty.");
 		}
-		
-		if(headlength < 1) {
+
+		if (headlength < 1) {
 			throw new IllegalArgumentException("The head length has to be greater than 0.");
 		}
 
@@ -98,6 +98,10 @@ public class GeneArchitecture<T> {
 		}
 		return genes;
 	}
+	
+	public static <T> Gene<T> createGeneFromSequence(List<GeneElement<T>> sequence) {
+		return createGenesFromSequence(sequence, true, 1).get(0);
+	}
 
 	public static <T> Gene<T> createGeneFromSequence(List<GeneElement<T>> sequence, boolean isModifiable) {
 		return createGenesFromSequence(sequence, isModifiable, 1).get(0);
@@ -137,6 +141,15 @@ public class GeneArchitecture<T> {
 		while (idx < generatedGene.getSequenceLength() && it.hasNext()) {
 			generatedGene.setSequenceAt(idx, it.next());
 			idx++;
+		}
+
+		// if the sequence does not contain enough elements in the tail pad it
+		// with random terminals
+		if (idx < generatedGene.getSequenceLength()) {
+			RandomEngine random = new DefaultRandomEngine();
+			for (; idx < generatedGene.getSequenceLength(); idx++) {
+				generatedGene.setSequenceAt(idx, random.pickElement(arch.potentialTerminals));
+			}
 		}
 
 		// create (additional) gene instances

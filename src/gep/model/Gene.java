@@ -25,7 +25,7 @@ public class Gene<T> {
 	 * @param arch
 	 *            the genes architecture reference.
 	 */
-	public Gene(GeneArchitecture<T> arch) {
+	Gene(GeneArchitecture<T> arch) {
 		this.architecture = arch;
 		this.sequence = new GeneElement[arch.getGeneLength()];
 	}

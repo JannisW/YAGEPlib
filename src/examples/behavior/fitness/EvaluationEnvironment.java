@@ -12,7 +12,9 @@ import gep.model.Individual;
 public class EvaluationEnvironment extends FitnessEnvironment<Boolean> {
 
 	final static int MAX_NUMBER_OF_SIMULATION_TICKS = 400;
-	final static double START_FITNESS = 100.0;
+	//final static double START_FITNESS = 100.0;
+	
+	public static boolean PRINT_STEPS = false;
 
 	private int posAgentX;
 	private int posAgentY;
@@ -80,7 +82,9 @@ public class EvaluationEnvironment extends FitnessEnvironment<Boolean> {
 		
 		movedDistance++;
 
-		currentMap.printCurrentMapState(posAgentX, posAgentY, agentOrientation);
+		if(PRINT_STEPS) {
+			currentMap.printCurrentMapState(posAgentX, posAgentY, agentOrientation);
+		}
 		return true;
 	}
 
@@ -107,7 +111,7 @@ public class EvaluationEnvironment extends FitnessEnvironment<Boolean> {
 	}
 
 	public void setAgentOrientation(Orientation agentOrientation) {
-		if(this.agentOrientation != agentOrientation) {
+		if(this.agentOrientation != agentOrientation && PRINT_STEPS) {
 			currentMap.printCurrentMapState(posAgentX, posAgentY, agentOrientation);
 		}
 		this.agentOrientation = agentOrientation;
@@ -178,7 +182,7 @@ public class EvaluationEnvironment extends FitnessEnvironment<Boolean> {
 			totalFitnessScore += fitnessFunction.getCurrentScore();
 		}
 
-		System.out.println("SCORE: " + totalFitnessScore + " (food consumed: " + foodConsumed + ")");
+		//System.out.println("SCORE: " + totalFitnessScore + " (food consumed: " + foodConsumed + ")");
 
 		return this.totalFitnessScore;
 

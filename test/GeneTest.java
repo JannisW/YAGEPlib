@@ -11,6 +11,7 @@ import gep.model.ChromosomeIndependentGeneTerminal;
 import gep.model.ExpressionTreeNode;
 import gep.model.Gene;
 import gep.model.GeneArchitecture;
+import gep.model.GeneElement;
 import gep.model.GeneFunction;
 import gep.model.GeneTerminal;
 
@@ -39,19 +40,20 @@ public class GeneTest {
 			potentialTerminals.add(new GenericTerminal(i));
 		}
 
-		GeneArchitecture<Boolean> arch = new GeneArchitecture<>(headLength, potentialFunctions, potentialTerminals);
-
-		Gene<Boolean> gene = new Gene<>(arch);
-		gene.setSequenceAt(0, twoArgFunc1);
-		gene.setSequenceAt(1, twoArgFunc2);
-		gene.setSequenceAt(2, oneArgFunc);
-		gene.setSequenceAt(3, potentialTerminals.get(0));
-		gene.setSequenceAt(4, twoArgFunc3);
-		gene.setSequenceAt(5, twoArgFunc4);
+		ArrayList<GeneElement<Boolean>> geneSeq = new ArrayList<>();
+		geneSeq.add(twoArgFunc1);
+		
+		geneSeq.add(twoArgFunc2);
+		geneSeq.add(oneArgFunc);
+		geneSeq.add(potentialTerminals.get(0));
+		geneSeq.add(twoArgFunc3);
+		geneSeq.add(twoArgFunc4);
 		for (int i = 6; i < geneLength; i++) {
-			gene.setSequenceAt(i, potentialTerminals.get(i - 5));
+			geneSeq.add(potentialTerminals.get(i - 5));
 		}
-
+		
+		Gene<Boolean> gene = GeneArchitecture.createGeneFromSequence(geneSeq);
+		
 		Chromosome<Boolean> c = ChromosomalArchitecture.createSingleGenicChromosome(gene);
 
 		// TODO check expression tree returned by the chromosome as well (not

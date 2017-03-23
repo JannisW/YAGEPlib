@@ -10,9 +10,6 @@ import gep.random.RandomEngine;
 /**
  * 
  * @author Johannes Wortmann
- * 
- *         TODO maybe delete ChromosomalArchitecture class and move contents to
- *         Chromosome
  *
  * @param <T>
  *            The return parameter type of the GeneElements contained in the
@@ -36,13 +33,21 @@ public class ChromosomalArchitecture<T> {
 		addGenes(genes);
 	}
 
+	public int addGene(GeneArchitecture<T> geneArch) {
+		return addGene(geneArch.createRandomGene());
+	}
+
+	public int addGene(List<GeneElement<T>> sequence) {
+		return addGene(GeneArchitecture.createGeneFromSequence(sequence));
+	}
+
 	public int addGene(Gene<T> g) {
 		if (g.architecture.isModifiable) {
 			genes.add(g);
 			return genes.size();
 		} else {
 			immutableGenes.add(g);
-			return immutableGenes.size();
+			return -immutableGenes.size();
 		}
 	}
 
@@ -77,6 +82,32 @@ public class ChromosomalArchitecture<T> {
 
 			this.rootGene = arch.createRandomGene();
 		}
+	}
+
+	public void setChromosomeRootToGene(int geneId) {
+		if (this.rootGene != null) {
+			throw new IllegalStateException("The Chromosomes root is unique and can only be set once!");
+		}
+
+		if (!isValidGeneId(geneId)) {
+			throw new IllegalStateException(
+					geneId + " Is an invalid geneId (does not exist) in the current state. Add the gene first!");
+		}
+
+		ArrayList<HomoeoticGeneElement<T>> link = new ArrayList<>();
+		link.add(new HomoeoticGeneElement<T>("dummy static link to " + geneId, "dsl", geneId));
+		GeneArchitecture<T> arch = new GeneArchitecture<T>(1, new ArrayList<>(), link);
+
+		this.rootGene = arch.createRandomGene();
+	}
+
+	private boolean isValidGeneId(int geneId) {
+		if (geneId == 0)
+			return rootGene != null;
+		else if (geneId > 0)
+			return geneId <= genes.size();
+		else // geneId < 0
+			return (-geneId) <= immutableGenes.size();
 	}
 
 	/**
@@ -129,6 +160,41 @@ public class ChromosomalArchitecture<T> {
 		Gene<T>[] generatedGenes = new Gene[genes.size()];
 		for (int i = 0; i < genes.size(); i++) {
 			generatedGenes[i] = genes.get(i).architecture.createRandomGene(r);
+		}
+		@SuppressWarnings("unchecked")
+		Gene<T>[] immutableGenes = new Gene[this.immutableGenes.size()];
+		this.immutableGenes.toArray(immutableGenes);
+
+		return new Chromosome<T>(generatedGenes, immutableGenes, generatedRoot);
+
+	}
+
+	/**
+	 * Creates a chromosome that contains all the genes as they are set in this
+	 * architecture. This means there will be no random generation of gene
+	 * sequences. This is only useful if the genes were created by a sequence.
+	 * 
+	 * @return A chromosome which is an exact replica of all the genes in this
+	 *         architecture.
+	 *         
+	 * @throws IllegalStateException if no modifiable gene exists or the root is not set
+	 */
+	public Chromosome<T> createReplica() {
+
+		if (genes.isEmpty()) {
+			throw new IllegalStateException("Cannot create chromosomes without one modifiable gene");
+		}
+
+		if (rootGene == null) {
+			throw new IllegalStateException("The Chromosomes root is not set!");
+		}
+
+		Gene<T> generatedRoot = new Gene<T>(rootGene);
+
+		@SuppressWarnings("unchecked")
+		Gene<T>[] generatedGenes = new Gene[genes.size()];
+		for (int i = 0; i < genes.size(); i++) {
+			generatedGenes[i] = new Gene<T>(genes.get(i));
 		}
 		@SuppressWarnings("unchecked")
 		Gene<T>[] immutableGenes = new Gene[this.immutableGenes.size()];

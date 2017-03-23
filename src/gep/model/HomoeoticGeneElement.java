@@ -3,6 +3,11 @@ package gep.model;
 public class HomoeoticGeneElement<T> extends GeneTerminal<T> {
 
 	public final int linkedGeneId;
+	
+	public HomoeoticGeneElement(int linkedGeneId) {
+		super("Link to gene with id " + linkedGeneId, "ln"+linkedGeneId);
+		this.linkedGeneId = linkedGeneId;
+	}
 
 	public HomoeoticGeneElement(String description, String shortDescription, int linkedGeneId) {
 		super(description, shortDescription);
