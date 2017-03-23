@@ -32,7 +32,7 @@ public class OnePointRecombination extends GeneticOperator {
 	}
 
 	@Override
-	public <T> void apply(Individual<T>[] individuals, int fromIdx) {
+	public <T> void apply(Individual<T>[] individuals, final int fromIdx) {
 		if (individuals.length - fromIdx < 2) {
 			// this operator requires at least two modifiable individuals
 			throw new IllegalArgumentException(
