@@ -27,8 +27,8 @@ import gep.model.Individual;
 public class EvaluationEnvironment extends FitnessEnvironment<Boolean> {
 
 	final static int MAX_NUMBER_OF_SIMULATION_TICKS = 400;
-	//final static double START_FITNESS = 100.0;
-	
+	// final static double START_FITNESS = 100.0;
+
 	public static boolean PRINT_STEPS = false;
 
 	private int posAgentX;
@@ -36,7 +36,7 @@ public class EvaluationEnvironment extends FitnessEnvironment<Boolean> {
 	private Orientation agentOrientation;
 
 	// TODO maybe change 2d array to 1d array
-	public Field[][] grid;
+	private Field[][] grid;
 
 	private int foodConsumed = 0;
 	private int movedDistance = 0;
@@ -53,7 +53,7 @@ public class EvaluationEnvironment extends FitnessEnvironment<Boolean> {
 
 	// the different maps (fitness cases) for generalization
 	private final WorldMap[] maps;
-	
+
 	private WorldMap currentMap; // TODO resolve redundancy with grid
 
 	public EvaluationEnvironment(ArrayList<WorldMap> maps, BehaviorFitnessFunction fitnessFunctionPerMap) {
@@ -94,13 +94,28 @@ public class EvaluationEnvironment extends FitnessEnvironment<Boolean> {
 			foodConsumed++;
 			fitnessFunction.applyFoodConsumedBonus();
 		}
-		
+
 		movedDistance++;
 
-		if(PRINT_STEPS) {
+		if (PRINT_STEPS) {
 			currentMap.printCurrentMapState(posAgentX, posAgentY, agentOrientation);
 		}
 		return true;
+	}
+
+	/**
+	 * Sets the marker flag of the field where the agent stays to the provided
+	 * boolean value.
+	 * 
+	 * @param marked
+	 *            true if marker should be set, false if it should be removed.
+	 */
+	public void setCurrentPositionMarker(boolean marked) {
+		if (marked) {
+			grid[posAgentX][posAgentY].setMarker();
+		} else {
+			grid[posAgentX][posAgentY].removeMarker();
+		}
 	}
 
 	/**
@@ -126,7 +141,7 @@ public class EvaluationEnvironment extends FitnessEnvironment<Boolean> {
 	}
 
 	public void setAgentOrientation(Orientation agentOrientation) {
-		if(this.agentOrientation != agentOrientation && PRINT_STEPS) {
+		if (this.agentOrientation != agentOrientation && PRINT_STEPS) {
 			currentMap.printCurrentMapState(posAgentX, posAgentY, agentOrientation);
 		}
 		this.agentOrientation = agentOrientation;
@@ -162,7 +177,7 @@ public class EvaluationEnvironment extends FitnessEnvironment<Boolean> {
 
 			fitnessFunction.resetFitnessScorePerMap();
 			foodConsumed = 0;
-			
+
 			currentMap = map;
 
 			grid = map.initMap();
@@ -197,7 +212,8 @@ public class EvaluationEnvironment extends FitnessEnvironment<Boolean> {
 			totalFitnessScore += fitnessFunction.getCurrentScore();
 		}
 
-		//System.out.println("SCORE: " + totalFitnessScore + " (food consumed: " + foodConsumed + ")");
+		// System.out.println("SCORE: " + totalFitnessScore + " (food consumed:
+		// " + foodConsumed + ")");
 
 		return this.totalFitnessScore;
 

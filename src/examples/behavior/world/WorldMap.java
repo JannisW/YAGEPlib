@@ -224,9 +224,9 @@ public class WorldMap {
 		
 	public void printCurrentMapState(int agentX, int agentY, Orientation agentOrientation) {
 		System.out.println();
-		for (int y = grid.length - 1; y >= 0; y--) {
+		for (int y = grid[0].length - 1; y >= 0; y--) {
 			System.out.print(y + "\t");
-			for (int x = 0; x < grid[0].length; x++) {
+			for (int x = 0; x < grid.length; x++) {
 				String fieldStr;
 				if (grid[x][y].isWall()) {
 					fieldStr = "# ";

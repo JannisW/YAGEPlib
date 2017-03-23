@@ -19,6 +19,7 @@ public class Field {
 	public static final int WALL_MASK = 0x01;
 	public static final int FOOD_MASK = 0x02;
 	public static final int PHERO_MASK = 0x04;
+	public static final int MARKER_MASK = 0x08;
 
 	private int properties;
 
@@ -46,12 +47,24 @@ public class Field {
 		return (properties & PHERO_MASK) != 0;
 	}
 	
+	public boolean isMarker() {
+		return (properties & MARKER_MASK) != 0;
+	}
+	
 	public void setFood() {
 		properties |= FOOD_MASK;
 	}
 	
 	public void setPhero() {
 		properties |= PHERO_MASK;
+	}
+	
+	public void setMarker() {
+		properties |= MARKER_MASK;
+	}
+	
+	public void removeMarker() {
+		properties = properties & (~MARKER_MASK);
 	}
 
 	public void removeFood() {
