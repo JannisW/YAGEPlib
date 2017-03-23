@@ -23,15 +23,19 @@ import gep.model.GeneFunction;
 public class SequenceFunction extends GeneFunction<Boolean> {
 
 	public SequenceFunction() {
-		super("Sequence node", "S", 2);
+		this(2);
+	}
+
+	public SequenceFunction(int numberOfArguments) {
+		super("Sequence node", "S", numberOfArguments);
 	}
 
 	@Override
 	public Boolean apply(List<ExpressionTreeNode<Boolean>> expTreeChilds) {
-		for (ExpressionTreeNode<Boolean> child: expTreeChilds) {
-			
+		for (ExpressionTreeNode<Boolean> child : expTreeChilds) {
+
 			// execute every child as long as a child returns failure
-			if(!child.execute()) {
+			if (!child.execute()) {
 				return false;
 			}
 		}

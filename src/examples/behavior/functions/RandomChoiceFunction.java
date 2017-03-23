@@ -19,27 +19,28 @@ import java.util.List;
 
 import gep.model.ExpressionTreeNode;
 import gep.model.GeneFunction;
+import gep.random.DefaultRandomEngine;
+import gep.random.RandomEngine;
 
-public class SelectorFunction extends GeneFunction<Boolean> {
-	
-	public SelectorFunction() {
+public class RandomChoiceFunction extends GeneFunction<Boolean> {
+
+	private RandomEngine random;
+
+	public RandomChoiceFunction() {
 		this(2);
 	}
 
-	public SelectorFunction(int numberOfArguments) {
-		super("Selector (fallback) node", "F", numberOfArguments);
+	public RandomChoiceFunction(int numberOfArguments) {
+		super("random choice node", "R", numberOfArguments);
+		random = new DefaultRandomEngine();
 	}
 
 	@Override
 	public Boolean apply(List<ExpressionTreeNode<Boolean>> expTreeChilds) {
-		for (ExpressionTreeNode<Boolean> child : expTreeChilds) {
 
-			// execute every child as long as one child returns success
-			if (child.execute()) {
-				return true;
-			}
-		}
-		return false;
+		int idx = random.getInt(0, expTreeChilds.size());
+
+		return expTreeChilds.get(idx).execute();
 	}
 
 }
