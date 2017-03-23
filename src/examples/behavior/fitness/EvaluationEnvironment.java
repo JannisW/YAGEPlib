@@ -110,12 +110,8 @@ public class EvaluationEnvironment extends FitnessEnvironment<Boolean> {
 	 * @param marked
 	 *            true if marker should be set, false if it should be removed.
 	 */
-	public void setCurrentPositionMarker(boolean marked) {
-		if (marked) {
-			grid[posAgentX][posAgentY].setMarker();
-		} else {
-			grid[posAgentX][posAgentY].removeMarker();
-		}
+	public void setMarkerOnCurrentPosition(boolean marked) {
+		currentMap.setMarkerOnCurrentPosition(posAgentX, posAgentY, marked);
 	}
 
 	/**
@@ -177,6 +173,7 @@ public class EvaluationEnvironment extends FitnessEnvironment<Boolean> {
 
 			fitnessFunction.resetFitnessScorePerMap();
 			foodConsumed = 0;
+			movedDistance = 0;
 
 			currentMap = map;
 
@@ -224,6 +221,7 @@ public class EvaluationEnvironment extends FitnessEnvironment<Boolean> {
 	protected void resetTotalFitnessScore() {
 		this.totalFitnessScore = 0;
 		this.foodConsumed = 0;
+		this.movedDistance = 0;
 	}
 
 }

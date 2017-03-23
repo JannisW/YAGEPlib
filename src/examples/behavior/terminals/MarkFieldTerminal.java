@@ -46,7 +46,7 @@ public class MarkFieldTerminal extends ChromosomeIndependentGeneTerminal<Boolean
 
 	@Override
 	public Boolean apply() {
-		env.setCurrentPositionMarker(addMarker);
+		env.setMarkerOnCurrentPosition(addMarker);
 		return true;
 	}
 

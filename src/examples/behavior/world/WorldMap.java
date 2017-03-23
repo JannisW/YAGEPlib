@@ -20,14 +20,17 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
-
-import examples.behavior.world.WorldMap;
+import java.util.HashSet;
 
 public class WorldMap {
 
 	private Field[][] grid;
 
 	private ArrayList<Field> foodFields;
+
+	private HashSet<Field> markedFields;
+	// TODO instead of hashset array of references to list elemeents could
+	// achieve guaranteed O(1) performance instead of just average
 
 	private int startX;
 	private int startY;
@@ -60,6 +63,7 @@ public class WorldMap {
 		}
 
 		foodFields = new ArrayList<Field>();
+		markedFields = new HashSet<Field>();
 
 		startX = dimX / 2;
 		startY = dimY / 2;
@@ -97,6 +101,12 @@ public class WorldMap {
 			field.setFood();
 		}
 
+		// reset marker
+		for (Field field : markedFields) {
+			field.removeMarker();
+		}
+		markedFields.clear();
+
 		// TODO redistribute other stuff
 
 		return grid;
@@ -109,6 +119,23 @@ public class WorldMap {
 	 */
 	public int getFoodAmount() {
 		return foodFields.size();
+	}
+
+	/**
+	 * Sets the marker flag of the field where the agent stays to the provided
+	 * boolean value.
+	 * 
+	 * @param marked
+	 *            true if marker should be set, false if it should be removed.
+	 */
+	public void setMarkerOnCurrentPosition(int x, int y, boolean marked) {
+		if (marked) {
+			grid[x][y].setMarker();
+			markedFields.add(grid[x][y]);
+		} else {
+			grid[x][y].removeMarker();
+			markedFields.remove(grid[x][y]);
+		}
 	}
 
 	private void readFromFile(Path pathToFile) throws IOException {
@@ -203,6 +230,8 @@ public class WorldMap {
 				} while (line.isEmpty());
 
 			}
+			
+			markedFields = new HashSet<>();
 		}
 	}
 
@@ -221,7 +250,7 @@ public class WorldMap {
 	public void printCurrentMapState() {
 		printCurrentMapState(startX, startY, startOrientation);
 	}
-		
+
 	public void printCurrentMapState(int agentX, int agentY, Orientation agentOrientation) {
 		System.out.println();
 		for (int y = grid[0].length - 1; y >= 0; y--) {
@@ -230,7 +259,7 @@ public class WorldMap {
 				String fieldStr;
 				if (grid[x][y].isWall()) {
 					fieldStr = "# ";
-				} else if(x == agentX && agentY == y) {
+				} else if (x == agentX && agentY == y) {
 					fieldStr = getAgentChar(agentOrientation) + " ";
 				} else if (grid[x][y].isEmpty()) {
 					fieldStr = "  ";
@@ -243,7 +272,7 @@ public class WorldMap {
 		}
 		System.out.println();
 	}
-	
+
 	private static char getAgentChar(final Orientation orientation) {
 		switch (orientation) {
 		case NORTH:
