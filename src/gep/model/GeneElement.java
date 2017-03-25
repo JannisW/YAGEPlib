@@ -15,9 +15,15 @@
  */
 package gep.model;
 
+import java.io.Serializable;
 import java.util.List;
 
-public abstract class GeneElement<T> {
+public abstract class GeneElement<T> implements Serializable {
+	
+	/**
+	 * The version UID used for serialization.
+	 */
+	private static final long serialVersionUID = -1464840519465038769L;
 	
 	String description;
 	String shortDescription;

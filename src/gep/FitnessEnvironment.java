@@ -20,23 +20,35 @@ import gep.model.Individual;
 public abstract class FitnessEnvironment<T> {
 
 	/**
-	 * Evaluates the fitness for every individual of the given population.
+	 * Evaluates the fitness for every individual of the given population and
+	 * returns the index of the best individual.
 	 * 
 	 * @param population
 	 *            The population to be assessed by this method.
-	 * @return The fitness value of the best individual
+	 * @return The index in the population array with the best fitness value.
 	 */
-	public double evaluateFitness(Individual<T>[] population) {
+	public int evaluateFitness(Individual<T>[] population) {
 		double maxFitness = Double.MIN_VALUE;
-		for (Individual<T> individual : population) { // TODO parallelize
+		int maxFitnessIdx = 0;
+		for (int i = 0; i < population.length; i++) {
+			// TODO parallelize (by adding abstract clone method to this class)
+			final Individual<T> individual = population[i];
 			individual.setFitness(evaluateFitness(individual));
-			maxFitness = Math.max(maxFitness, individual.getFitness());
+			if (maxFitness < individual.getFitness()) {
+				maxFitness = individual.getFitness();
+				maxFitnessIdx = i;
+			}
 		}
-		return maxFitness;
+		return maxFitnessIdx;
 	}
 
+	/**
+	 * Evaluates the fitness of the given individual.
+	 * 
+	 * @param individual
+	 *            The individual to be evaluated.
+	 * @return The fitness value of the individual
+	 */
 	abstract protected double evaluateFitness(Individual<T> individual);
-	
-	// maybe not abstract individual fitness evaluation (but add an init)
 
 }

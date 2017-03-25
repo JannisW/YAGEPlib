@@ -111,6 +111,10 @@ public class WorldMap {
 
 		return grid;
 	}
+	
+	public Field getField(int x, int y) {
+		return grid[x][y];
+	}
 
 	/**
 	 * Returns the amount of food that is on the map.
@@ -122,8 +126,13 @@ public class WorldMap {
 	}
 
 	/**
-	 * Sets the marker flag of the field where the agent stays to the provided
-	 * boolean value.
+	 * Sets the marker flag of the field defined by the given x and y
+	 * coordinates to the provided boolean value.
+	 * 
+	 * @param x
+	 *            x-coordinate
+	 * @param y
+	 *            y-coordinate
 	 * 
 	 * @param marked
 	 *            true if marker should be set, false if it should be removed.
@@ -136,6 +145,14 @@ public class WorldMap {
 			grid[x][y].removeMarker();
 			markedFields.remove(grid[x][y]);
 		}
+	}
+	
+	public int getDimensionX() {
+		return grid.length;
+	}
+	
+	public int getDimensionY() {
+		return grid[0].length;
 	}
 
 	private void readFromFile(Path pathToFile) throws IOException {
@@ -230,7 +247,7 @@ public class WorldMap {
 				} while (line.isEmpty());
 
 			}
-			
+
 			markedFields = new HashSet<>();
 		}
 	}

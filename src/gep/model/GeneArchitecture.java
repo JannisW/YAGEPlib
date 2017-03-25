@@ -15,6 +15,7 @@
  */
 package gep.model;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -24,9 +25,14 @@ import java.util.Set;
 import gep.random.DefaultRandomEngine;
 import gep.random.RandomEngine;
 
-public class GeneArchitecture<T> {
+public class GeneArchitecture<T> implements Serializable {
 
-	public static final RandomEngine DEFAULT_RANDOM_ENGINE = new DefaultRandomEngine();
+	/**
+	 * The version UID used for serialization.
+	 */
+	private static final long serialVersionUID = 3231873693626540222L;
+
+	transient public static final RandomEngine DEFAULT_RANDOM_ENGINE = new DefaultRandomEngine();
 
 	public final int headLength;
 

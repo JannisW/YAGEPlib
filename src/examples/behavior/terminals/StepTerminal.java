@@ -17,15 +17,16 @@ package examples.behavior.terminals;
 
 import examples.behavior.fitness.EvaluationEnvironment;
 import examples.behavior.world.Orientation;
-import gep.model.ChromosomeIndependentGeneTerminal;
 
-public class StepTerminal extends ChromosomeIndependentGeneTerminal<Boolean> {
+public class StepTerminal extends EnvironmentDependendTerminal<Boolean> {
 
-	private EvaluationEnvironment env;
-
+	/**
+	 * The version UID used for serialization.
+	 */
+	private static final long serialVersionUID = -7648448858533698600L;
+	
 	public StepTerminal(EvaluationEnvironment env) {
-		super("step", "s");
-		this.env = env;
+		super("step", "s", env);
 	}
 
 	@Override

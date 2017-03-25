@@ -16,15 +16,16 @@
 package examples.behavior.terminals;
 
 import examples.behavior.fitness.EvaluationEnvironment;
-import gep.model.ChromosomeIndependentGeneTerminal;
 
-public class FoodInFrontCheckTerminal extends ChromosomeIndependentGeneTerminal<Boolean> {
+public class FoodInFrontCheckTerminal extends EnvironmentDependendTerminal<Boolean> {
 
-	private EvaluationEnvironment env;
-
+	/**
+	 * The version UID used for serialization.
+	 */
+	private static final long serialVersionUID = -7613797918590195140L;
+	
 	public FoodInFrontCheckTerminal(EvaluationEnvironment env) {
-		super("food?", "f");
-		this.env = env;
+		super("food?", "f", env);
 	}
 
 	@Override

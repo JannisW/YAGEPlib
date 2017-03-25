@@ -15,6 +15,9 @@
  */
 package gep;
 
+import java.io.IOException;
+import java.nio.file.Paths;
+
 import gep.model.Individual;
 import gep.selection.SelectionMethod;
 
@@ -23,24 +26,34 @@ public class GeneExpressionProgramming {
 	public static <T> void run(Individual<T>[] population, FitnessEnvironment<T> fe, SelectionMethod sm,
 			ReproductionEnvironment re, int maxNumGenerations, double targetFitness) {
 
+		int bestIndividualIdx;
 		double fitnessOfBestIndividual;
 		int currentGeneration = 0;
 
 		System.out.println("Start GEP evolution...");
-		fitnessOfBestIndividual = fe.evaluateFitness(population);
+		bestIndividualIdx = fe.evaluateFitness(population);
+		fitnessOfBestIndividual = population[bestIndividualIdx].getFitness();
 		System.out.println(
 				" Initial generation " + currentGeneration + " (Best fitness: " + fitnessOfBestIndividual + ")");
 
 		do {
 			int modStartIdx = sm.select(population);
 			re.reproduce(population, modStartIdx);
-			fitnessOfBestIndividual = fe.evaluateFitness(population);
+			bestIndividualIdx = fe.evaluateFitness(population);
+			fitnessOfBestIndividual = population[bestIndividualIdx].getFitness();
 			currentGeneration++;
 			System.out.println(
 					"Finished generation " + currentGeneration + " (Best fitness: " + fitnessOfBestIndividual + ")");
 
 		} while (fitnessOfBestIndividual < targetFitness && currentGeneration < maxNumGenerations);
 
+		try {
+			population[bestIndividualIdx].writeToFile(Paths.get("./test.ser"));
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 	}
 
 }

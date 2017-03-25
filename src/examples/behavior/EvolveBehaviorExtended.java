@@ -176,10 +176,10 @@ public class EvolveBehaviorExtended {
 
 		ReproductionEnvironment re = new ReproductionEnvironment();
 		re.addGeneticOperator(new Mutation(0.2));
-//		re.addGeneticOperator(new Inversion(0.1));
-//		re.addGeneticOperator(new GeneRecombination(0.3));
+		re.addGeneticOperator(new Inversion(0.1));
+		re.addGeneticOperator(new GeneRecombination(0.3));
 		re.addGeneticOperator(new OnePointRecombination(0.5)); // 0.8
-//		re.addGeneticOperator(new TwoPointRecombination(0.5));
+		re.addGeneticOperator(new TwoPointRecombination(0.5));
 
 		SelectionMethod sm = new RouletteWheelSelectionWithElitePreservation(0.05);
 

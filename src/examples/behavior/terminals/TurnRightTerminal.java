@@ -17,15 +17,16 @@ package examples.behavior.terminals;
 
 import examples.behavior.fitness.EvaluationEnvironment;
 import examples.behavior.world.Orientation;
-import gep.model.ChromosomeIndependentGeneTerminal;
 
-public class TurnRightTerminal extends ChromosomeIndependentGeneTerminal<Boolean> {
+public class TurnRightTerminal extends EnvironmentDependendTerminal<Boolean> {
 	
-	private EvaluationEnvironment env;
-
+	/**
+	 * The version UID used for serialization.
+	 */
+	private static final long serialVersionUID = -2282013490818545838L;
+	
 	public TurnRightTerminal(EvaluationEnvironment env) {
-		super("turn right", "r");
-		this.env = env;
+		super("turn right", "r", env);
 	}
 
 	@Override

@@ -15,10 +15,20 @@
  */
 package gep.model;
 
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Individual<T> implements Comparable<Individual<T>> {
+public class Individual<T> implements Comparable<Individual<T>>, Serializable {
+
+	/**
+	 * The version UID used for serialization.
+	 */
+	private static final long serialVersionUID = -9199945441121316518L;
 
 	public final Chromosome<T>[] chromosomes;
 
@@ -64,6 +74,12 @@ public class Individual<T> implements Comparable<Individual<T>> {
 	public int compareTo(Individual<T> o) {
 		return Double.compare(fitness, o.fitness); // TODO check if has to be
 													// inverted
+	}
+	
+	public void writeToFile(Path outPath) throws IOException {
+		try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(outPath.toFile()))) {
+	         out.writeObject(this);
+	      }
 	}
 
 }

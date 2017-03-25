@@ -16,15 +16,16 @@
 package examples.behavior.terminals;
 
 import examples.behavior.fitness.EvaluationEnvironment;
-import gep.model.ChromosomeIndependentGeneTerminal;
 
-public class EmptyInFrontCheckTerminal extends ChromosomeIndependentGeneTerminal<Boolean> {
+public class EmptyInFrontCheckTerminal extends EnvironmentDependendTerminal<Boolean> {
 
-	private EvaluationEnvironment env;
-
+	/**
+	 * The version UID used for serialization.
+	 */
+	private static final long serialVersionUID = 4339680571901903556L;
+	
 	public EmptyInFrontCheckTerminal(EvaluationEnvironment env) {
-		super("empty?", "e");
-		this.env = env;
+		super("empty?", "e", env);
 	}
 
 	@Override

@@ -15,12 +15,18 @@
  */
 package gep.model;
 
+import java.io.Serializable;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Deque;
 import java.util.List;
 
-public class ExpressionTreeNode<T> {
+public class ExpressionTreeNode<T> implements Serializable {
+
+	/**
+	 * The version UID used for serialization.
+	 */
+	private static final long serialVersionUID = 1356055862072269250L;
 
 	private final GeneElement<T> nodeElement;
 

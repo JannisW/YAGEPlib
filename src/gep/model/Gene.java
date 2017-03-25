@@ -15,18 +15,34 @@
  */
 package gep.model;
 
+import java.io.Serializable;
 import java.util.ArrayDeque;
 import java.util.Deque;
 
-public class Gene<T> {
+public class Gene<T> implements Serializable {
 
+	/**
+	 * The version UID used for serialization.
+	 */
+	private static final long serialVersionUID = -532910009254525337L;
+
+	/**
+	 * The sequence of this gene.
+	 */
 	final private GeneElement<T>[] sequence; // TODO maybe optimize by using
 												// arrays
 												// of int (index structure)
 	// TODO maybe do explicit separation in head and tail
 
+	/**
+	 * Reference to the meta information of this gene (architecture of the gene)
+	 */
 	public final GeneArchitecture<T> architecture;
 
+	/**
+	 * Stores the last generated expression tree as long as the sequence is not
+	 * modified.
+	 */
 	private ExpressionTreeNode<T> expressionTreeCache = null;
 
 	// TODO check if the constructor can be protected from the outside... (worth

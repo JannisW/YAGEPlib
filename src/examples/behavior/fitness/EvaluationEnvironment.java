@@ -26,7 +26,7 @@ import gep.model.Individual;
 
 public class EvaluationEnvironment extends FitnessEnvironment<Boolean> {
 
-	final static int MAX_NUMBER_OF_SIMULATION_TICKS = 400;
+	final protected static int MAX_NUMBER_OF_SIMULATION_TICKS = 400;
 	// final static double START_FITNESS = 100.0;
 
 	public static boolean PRINT_STEPS = false;
@@ -36,7 +36,7 @@ public class EvaluationEnvironment extends FitnessEnvironment<Boolean> {
 	private Orientation agentOrientation;
 
 	// TODO maybe change 2d array to 1d array
-	private Field[][] grid;
+	//private Field[][] grid;
 
 	private int foodConsumed = 0;
 	private int movedDistance = 0;
@@ -44,7 +44,7 @@ public class EvaluationEnvironment extends FitnessEnvironment<Boolean> {
 	/**
 	 * controls the current fitness score for the current fitness case (map)
 	 */
-	protected BehaviorFitnessFunction fitnessFunction;
+	transient protected BehaviorFitnessFunction fitnessFunction;
 
 	/**
 	 * Keeps the accumulated fitness score over all maps.
@@ -52,15 +52,18 @@ public class EvaluationEnvironment extends FitnessEnvironment<Boolean> {
 	private double totalFitnessScore;
 
 	// the different maps (fitness cases) for generalization
-	private final WorldMap[] maps;
+	protected final WorldMap[] maps;
 
-	private WorldMap currentMap; // TODO resolve redundancy with grid
+	protected WorldMap currentMap; // TODO resolve redundancy with grid
+
+	public EvaluationEnvironment(WorldMap[] maps, BehaviorFitnessFunction fitnessFunctionPerMap) {
+		this.maps = maps;
+		this.fitnessFunction = fitnessFunctionPerMap;
+		resetTotalFitnessScore();
+	}
 
 	public EvaluationEnvironment(ArrayList<WorldMap> maps, BehaviorFitnessFunction fitnessFunctionPerMap) {
-		this.maps = maps.toArray(new WorldMap[maps.size()]);
-		this.fitnessFunction = fitnessFunctionPerMap;
-		fitnessFunction.resetFitnessScorePerMap();
-		resetTotalFitnessScore();
+		this(maps.toArray(new WorldMap[maps.size()]), fitnessFunctionPerMap);
 	}
 
 	/**
@@ -78,8 +81,8 @@ public class EvaluationEnvironment extends FitnessEnvironment<Boolean> {
 	 * @return true, if the move was successful, false otherwise.
 	 */
 	public boolean moveTo(int x, int y) {
-		// System.out.println("CALLED");
-		if (grid[x][y].isWall()) {
+		final Field goalField = currentMap.getField(x, y);
+		if (goalField.isWall()) {
 			// give penalty for actually try to move on a field with a wall.
 			fitnessFunction.applyWalkIntoWallPenalty();
 			return false;
@@ -89,8 +92,8 @@ public class EvaluationEnvironment extends FitnessEnvironment<Boolean> {
 
 		posAgentX = x;
 		posAgentY = y;
-		if (grid[x][y].isFood()) {
-			grid[x][y].removeFood();
+		if (goalField.isFood()) {
+			goalField.removeFood();
 			foodConsumed++;
 			fitnessFunction.applyFoodConsumedBonus();
 		}
@@ -132,6 +135,11 @@ public class EvaluationEnvironment extends FitnessEnvironment<Boolean> {
 		return posAgentY;
 	}
 
+	protected void setAgentPos(int x, int y) {
+		this.posAgentX = x;
+		this.posAgentY = y;
+	}
+
 	public Orientation getAgentOrientation() {
 		return agentOrientation;
 	}
@@ -152,13 +160,13 @@ public class EvaluationEnvironment extends FitnessEnvironment<Boolean> {
 	public Field getFieldInFront() {
 		switch (getAgentOrientation()) {
 		case NORTH:
-			return grid[posAgentX][posAgentY + 1];
+			return currentMap.getField(posAgentX, posAgentY + 1);
 		case EAST:
-			return grid[posAgentX + 1][posAgentY];
+			return currentMap.getField(posAgentX + 1, posAgentY);
 		case SOUTH:
-			return grid[posAgentX][posAgentY - 1];
+			return currentMap.getField(posAgentX, posAgentY - 1);
 		case WEST:
-			return grid[posAgentX - 1][posAgentY];
+			return currentMap.getField(posAgentX - 1, posAgentY);
 		}
 
 		return null; // never be reached
@@ -176,8 +184,8 @@ public class EvaluationEnvironment extends FitnessEnvironment<Boolean> {
 			movedDistance = 0;
 
 			currentMap = map;
-
-			grid = map.initMap();
+			currentMap.initMap();
+			
 			posAgentX = map.getStartPositionX();
 			posAgentY = map.getStartPositionY();
 			setAgentOrientation(map.getStartOrientation());

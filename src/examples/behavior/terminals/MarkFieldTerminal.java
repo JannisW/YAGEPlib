@@ -16,11 +16,13 @@
 package examples.behavior.terminals;
 
 import examples.behavior.fitness.EvaluationEnvironment;
-import gep.model.ChromosomeIndependentGeneTerminal;
 
-public class MarkFieldTerminal extends ChromosomeIndependentGeneTerminal<Boolean> {
+public class MarkFieldTerminal extends EnvironmentDependendTerminal<Boolean> {
 
-	private EvaluationEnvironment env;
+	/**
+	 * The version UID used for serialization.
+	 */
+	private static final long serialVersionUID = 5264892072006949273L;
 
 	private final boolean addMarker;
 
@@ -39,8 +41,7 @@ public class MarkFieldTerminal extends ChromosomeIndependentGeneTerminal<Boolean
 	 *            markers
 	 */
 	public MarkFieldTerminal(EvaluationEnvironment env, boolean addMarker) {
-		super("mark", "m");
-		this.env = env;
+		super("mark", "m", env);
 		this.addMarker = addMarker;
 	}
 

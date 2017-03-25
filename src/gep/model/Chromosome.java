@@ -15,6 +15,8 @@
  */
 package gep.model;
 
+import java.io.Serializable;
+
 /**
  * This class implements a Chromosome, which is basically a collection of
  * modifiable and unmodifiable genes linked by a linking function.
@@ -29,7 +31,12 @@ package gep.model;
  *            UntypedChromosome as a subclass or the need to provide conversion
  *            functions).
  */
-public class Chromosome<T> {
+public class Chromosome<T> implements Serializable {
+
+	/**
+	 * The version UID used for serialization.
+	 */
+	private static final long serialVersionUID = 8552801008044841155L;
 
 	/**
 	 * The collection of modifiable genes of the chromosome
