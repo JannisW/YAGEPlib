@@ -16,6 +16,7 @@
 package examples.behavior.world;
 
 public class Field {
+	public static final int EMPTY_MASK = 0x00;
 	public static final int WALL_MASK = 0x01;
 	public static final int FOOD_MASK = 0x02;
 	public static final int PHERO_MASK = 0x04;

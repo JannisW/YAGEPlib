@@ -31,7 +31,7 @@ public class GeneTransposition extends GeneticOperator {
 
 	@Override
 	protected <T> void apply(Chromosome<T> c) {
-		if (random.decideBinaryDecision(super.applicationRate)) {
+		if (c.genes.length > 1 && random.decideBinaryDecision(super.applicationRate)) {
 			// apply operator
 			int transposonGeneIdx = random.getInt(1, c.genes.length);
 

@@ -23,7 +23,7 @@ import gep.selection.SelectionMethod;
 
 public class GeneExpressionProgramming {
 
-	public static <T> void run(Individual<T>[] population, FitnessEnvironment<T> fe, SelectionMethod sm,
+	public static <T> GepResult<T> run(Individual<T>[] population, FitnessEnvironment<T> fe, SelectionMethod sm,
 			ReproductionEnvironment re, int maxNumGenerations, double targetFitness) {
 
 		int bestIndividualIdx;
@@ -54,6 +54,8 @@ public class GeneExpressionProgramming {
 			e.printStackTrace();
 		}
 		
+		
+		return new GepResult<>(currentGeneration, maxNumGenerations, population[bestIndividualIdx]);
 	}
 
 }

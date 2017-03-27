@@ -223,6 +223,8 @@ public class WorldMap {
 					int properties;
 					if (tokens[x].equals("#")) {
 						properties = Field.WALL_MASK;
+					} else if(tokens[x].equals("-")) {
+						properties = Field.EMPTY_MASK;
 					} else {
 						properties = Integer.parseInt(tokens[x]);
 					}
