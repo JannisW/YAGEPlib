@@ -23,6 +23,7 @@ import java.util.List;
 import gep.random.RandomEngine;
 
 /**
+ * This class is a factory class to create random Chromosomes.
  * 
  * @author Johannes Wortmann
  *
@@ -155,10 +156,28 @@ public class ChromosomalArchitecture<T> {
 		return GeneArchitecture.createGeneFromSequence(sequence, false);
 	}
 
+	/**
+	 * Creates a random Chromosome with respect to the possible elements in the
+	 * architectures genes. The order of the genes will be preserved only the
+	 * genes itself are randomly created.
+	 * 
+	 * Convienient method which uses the default random engine.
+	 * 
+	 * @return A randomly created Chromosome
+	 */
 	public Chromosome<T> create() {
 		return create(GeneArchitecture.DEFAULT_RANDOM_ENGINE);
 	}
 
+	/**
+	 * Creates a random Chromosome with respect to the possible elements in the
+	 * architectures genes. The order of the genes will be preserved only the
+	 * genes itself are randomly created.
+	 * 
+	 * @param r
+	 *            The random engine to be used for creation.
+	 * @return A randomly created Chromosome
+	 */
 	public Chromosome<T> create(RandomEngine r) {
 
 		if (genes.isEmpty()) {
@@ -191,8 +210,9 @@ public class ChromosomalArchitecture<T> {
 	 * 
 	 * @return A chromosome which is an exact replica of all the genes in this
 	 *         architecture.
-	 *         
-	 * @throws IllegalStateException if no modifiable gene exists or the root is not set
+	 * 
+	 * @throws IllegalStateException
+	 *             if no modifiable gene exists or the root is not set
 	 */
 	public Chromosome<T> createReplica() {
 
@@ -229,6 +249,10 @@ public class ChromosomalArchitecture<T> {
 	 */
 	@SuppressWarnings("unchecked")
 	public static <T> Chromosome<T> createSingleGenicChromosome(Gene<T> gene) {
+		if (!gene.architecture.isModifiable) {
+			throw new IllegalArgumentException("The given gene has to be set to modifiable");
+		}
+
 		ArrayList<HomoeoticGeneElement<T>> link = new ArrayList<>();
 
 		// Link to the provided gene which gets the gene id 1 (0 is the dummy
@@ -240,29 +264,5 @@ public class ChromosomalArchitecture<T> {
 
 		return new Chromosome<T>(new Gene[] { new Gene<T>(gene) }, new Gene[] {}, generatedRoot);
 	}
-
-	/*
-	 * Deque<Gene<T>> unresolvedDependenciesStack = new ArrayDeque<>();
-	 * Set<Gene<T>> unresolvedDependenciesSet = new HashSet<Gene<T>>();
-	 * unresolvedDependenciesStack.push(rootGene);
-	 * unresolvedDependenciesSet.add(rootGene);
-	 * 
-	 * HashMap<Gene<T>, Gene<T>> geneCopyMapping = new HashMap<>();
-	 * 
-	 * while(!unresolvedDependenciesStack.isEmpty()) { Gene<T> curr =
-	 * unresolvedDependenciesStack.peek();
-	 * 
-	 * List<GeneTerminal<T>> potTerminals =
-	 * curr.architecture.potentialTerminals;
-	 * 
-	 * boolean unresolvedDependencyFound = false; for (GeneTerminal<T>
-	 * potTerminal : potTerminals) { if(potTerminal instanceof
-	 * HomoeoticGeneElement) { HomoeoticGeneElement<T> link =
-	 * (HomoeoticGeneElement<T>) potTerminal;
-	 * if(unresolvedDependenciesSet.add(link.linkedGene)) { // new dependency
-	 * found unresolvedDependenciesStack.push(link.linkedGene);
-	 * unresolvedDependencyFound = true; } } } if(!unresolvedDependencyFound) {
-	 * GeneArchitecture<T> } }
-	 */
 
 }

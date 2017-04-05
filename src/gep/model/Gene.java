@@ -19,6 +19,15 @@ import java.io.Serializable;
 import java.util.ArrayDeque;
 import java.util.Deque;
 
+/**
+ * This class represents a gene in gene expression programming.
+ * 
+ * @author Johannes Wortmann
+ *
+ * @param <T>
+ *            The return type of a node in the encoded expression tree (=the
+ *            type of gene elements).
+ */
 public class Gene<T> implements Serializable {
 
 	/**
@@ -45,8 +54,6 @@ public class Gene<T> implements Serializable {
 	 */
 	private ExpressionTreeNode<T> expressionTreeCache = null;
 
-	// TODO check if the constructor can be protected from the outside... (worth
-	// it? as it might complicate genetic operations
 	/**
 	 * Creates a new Gene linked to the given architecture. To make sure the
 	 * sequence is consistent with the architecture this constructor should not
@@ -56,9 +63,10 @@ public class Gene<T> implements Serializable {
 	 * @param arch
 	 *            the genes architecture reference.
 	 */
+	@SuppressWarnings("unchecked")
 	Gene(GeneArchitecture<T> arch) {
 		this.architecture = arch;
-		this.sequence = new GeneElement[arch.getGeneLength()];
+		this.sequence = (GeneElement<T>[]) new GeneElement<?>[arch.getGeneLength()];
 	}
 
 	/**
@@ -68,9 +76,10 @@ public class Gene<T> implements Serializable {
 	 * @param other
 	 *            The gene to be copied.
 	 */
+	@SuppressWarnings("unchecked")
 	public Gene(Gene<T> other) {
 		this.architecture = other.architecture;
-		this.sequence = new GeneElement[other.sequence.length];
+		this.sequence = (GeneElement<T>[]) new GeneElement<?>[other.sequence.length];
 		System.arraycopy(other.sequence, 0, sequence, 0, sequence.length);
 		this.invalidateExpressionTreeCache();
 	}
@@ -164,17 +173,25 @@ public class Gene<T> implements Serializable {
 	 *             - if copying would cause access of data outside array bounds.
 	 */
 	public GeneElement<T>[] getSubsequence(int startIdx, int length) {
-		GeneElement<T>[] res = new GeneElement[length];
+		@SuppressWarnings("unchecked")
+		GeneElement<T>[] res = (GeneElement<T>[]) new GeneElement<?>[length];
 		System.arraycopy(sequence, startIdx, res, 0, length);
 		return res;
 	}
 
 	/**
-	 * Returns the element in the sequence at the given index
+	 * Sets the element in the sequence at the given index to the given element.
+	 * <p>
+	 * The given new element has to be part of the the possible elements in the
+	 * genes architecture. Because of performance reasons it is not checked at
+	 * runtime.
 	 * 
 	 * @param idx
 	 *            The elements index
-	 * @return The element at the given index
+	 * 
+	 * @param newElement
+	 *            The element that should be set a the specified index (has to
+	 *            be part of the architectures possible elements!)
 	 */
 	public void setSequenceAt(int idx, GeneElement<T> newElement) {
 		sequence[idx] = newElement;
@@ -185,6 +202,10 @@ public class Gene<T> implements Serializable {
 	/**
 	 * Sets the sequence of this gene from pos to pos+length to the values given
 	 * in the src array from srcPos to srcPos+length.
+	 * <p>
+	 * The given new elements have to be part of the the possible elements in
+	 * the genes architecture. Because of performance reasons it is not checked
+	 * at runtime.
 	 * 
 	 * @param pos
 	 *            The start position in the sequence
@@ -206,7 +227,7 @@ public class Gene<T> implements Serializable {
 	 * 
 	 * Thus, the length includes non-coding regions of the gene.
 	 * 
-	 * @return The length of the sequence
+	 * @return The length of the genes sequence.
 	 */
 	public int getSequenceLength() {
 		return sequence.length;

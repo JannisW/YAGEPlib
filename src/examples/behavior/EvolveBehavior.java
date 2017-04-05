@@ -82,6 +82,8 @@ public class EvolveBehavior {
 
 	public static void main(String[] args) {
 
+		double bestFitness = -1.0;
+
 		for (chromosomeHeadLength = MIN_CHROMOSOME_HEAD_LENGTH; chromosomeHeadLength <= MAX_CHROMOSOME_HEAD_LENGTH; chromosomeHeadLength++) {
 
 			String suffix = "";
@@ -96,7 +98,8 @@ public class EvolveBehavior {
 			}
 
 			try (BufferedWriter bw = new BufferedWriter(new FileWriter(
-					Paths.get("benchmarks", "lecturemap", "benchresult" + chromosomeHeadLength + suffix + ".tsv").toFile()))) {
+					Paths.get("benchmarks", "lecturemap", "benchresult" + chromosomeHeadLength + suffix + ".tsv")
+							.toFile()))) {
 
 				bw.write("num_gen\tmax_gen\tbest_fitness\tlen_chromosome");
 				bw.newLine();
@@ -117,6 +120,11 @@ public class EvolveBehavior {
 					bw.write(r.numGenerations + "\t" + r.maxGenrations + "\t" + r.getFitnessOfBestIndivudal() + "\t"
 							+ chromosomeHeadLength);
 					bw.newLine();
+
+					if (r.getFitnessOfBestIndivudal() > bestFitness) {
+						r.bestIndividual.writeToFile(Paths.get("./bestIndividual.ser"));
+						bestFitness = r.getFitnessOfBestIndivudal();
+					}
 
 				}
 
@@ -208,8 +216,8 @@ public class EvolveBehavior {
 		potentialTerminals.add(new TurnRightTerminal(env));
 
 		ChromosomalArchitecture<Boolean> chromosomeFactory = new ChromosomalArchitecture<>();
-		int basicGeneId = chromosomeFactory.addGene(new GeneArchitecture<Boolean>(Math.floorDiv(chromosomeHeadLength, 3),
-				supportedBehaviorTreeNodes, potentialTerminals));
+		int basicGeneId = chromosomeFactory.addGene(new GeneArchitecture<Boolean>(
+				Math.floorDiv(chromosomeHeadLength, 3), supportedBehaviorTreeNodes, potentialTerminals));
 
 		// create homoeotic gene
 		ArrayList<GeneTerminal<Boolean>> potentialHomoeoticGeneTerminals = new ArrayList<GeneTerminal<Boolean>>(
@@ -270,8 +278,8 @@ public class EvolveBehavior {
 
 		// good value for head length was 6
 		ChromosomalArchitecture<Boolean> chromosomeFactory = new ChromosomalArchitecture<>();
-		int basicGeneId = chromosomeFactory.addGene(new GeneArchitecture<Boolean>(Math.floorDiv(chromosomeHeadLength, 3),
-				supportedBehaviorTreeNodes, potentialStepTerminals));
+		int basicGeneId = chromosomeFactory.addGene(new GeneArchitecture<Boolean>(
+				Math.floorDiv(chromosomeHeadLength, 3), supportedBehaviorTreeNodes, potentialStepTerminals));
 
 		// create homoeotic turn-controlling gene
 		ArrayList<GeneTerminal<Boolean>> potentialHomoeoticGeneTerminals = new ArrayList<GeneTerminal<Boolean>>(7);
@@ -361,24 +369,15 @@ public class EvolveBehavior {
 
 		cArch.setChromosomeRootToGene(homoeoticGeneId);
 
+		// create optimal solution
 		Chromosome<Boolean> cOpt = cArch.createReplica();
 
-		// create optimal solution
-		Individual<Boolean> indiOpt = new Individual<>(1);
-		indiOpt.chromosomes[0] = cOpt;
-
 		// create some random individuals
-		Individual<Boolean> indi1 = new Individual<>(1);
-		indi1.chromosomes[0] = cArch.create();
+		Individual<Boolean>[] population = IndividualArchitecture.createSingleChromosomalArchitecture(cArch)
+				.createRandomPopulation(4);
 
-		Individual<Boolean> indi2 = new Individual<>(1);
-		indi2.chromosomes[0] = cArch.create();
-
-		Individual<Boolean> indi3 = new Individual<>(1);
-		indi3.chromosomes[0] = cArch.create();
-
-		@SuppressWarnings("unchecked")
-		Individual<Boolean>[] population = new Individual[] { indiOpt, indi1, indi2, indi3 };
+		// set one solution to the optimum
+		population[0].chromosomes[0] = cOpt;
 
 		ReproductionEnvironment re = new ReproductionEnvironment();
 		re.addGeneticOperator(new Mutation(0.2));

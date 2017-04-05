@@ -16,6 +16,7 @@
 package examples.behavior.world;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Path;
@@ -29,16 +30,20 @@ public class WorldMap {
 	private ArrayList<Field> foodFields;
 
 	private HashSet<Field> markedFields;
-	// TODO instead of hashset array of references to list elemeents could
+	// TODO instead of hashset array of references to list elements could
 	// achieve guaranteed O(1) performance instead of just average
 
 	private int startX;
 	private int startY;
 	private Orientation startOrientation;
 
+	public WorldMap(File mapFile) throws IOException {
+		readFromFile(mapFile);
+	}
+	
 	public WorldMap(Path pathToFile) throws IOException {
-		readFromFile(pathToFile);
-		printCurrentMapState();
+		this(pathToFile.toFile());
+		//printCurrentMapState();
 	}
 
 	public WorldMap(final int dimX, final int dimY) {
@@ -155,8 +160,8 @@ public class WorldMap {
 		return grid[0].length;
 	}
 
-	private void readFromFile(Path pathToFile) throws IOException {
-		try (BufferedReader br = new BufferedReader(new FileReader(pathToFile.toFile()))) {
+	private void readFromFile(File mapFile) throws IOException {
+		try (BufferedReader br = new BufferedReader(new FileReader(mapFile))) {
 
 			int numLinesRead = 0;
 

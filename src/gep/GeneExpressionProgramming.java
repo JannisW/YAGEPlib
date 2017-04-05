@@ -15,16 +15,47 @@
  */
 package gep;
 
-import java.io.IOException;
-import java.nio.file.Paths;
-
 import gep.model.Individual;
 import gep.selection.SelectionMethod;
 
+/**
+ * This class contains the GEP control. It contains the static method that
+ * executes the GEP workflow.
+ * 
+ * @author Johannes Wortmann
+ *
+ */
 public class GeneExpressionProgramming {
 
+	/**
+	 * Runs Gene Expression Programming to find a solution to the problem
+	 * defined by the given parameters. </br>
+	 * This function will modify and update the given population array per
+	 * generation.
+	 * 
+	 * @param population
+	 *            The initial population
+	 * @param fe
+	 *            The fitness environment used to assess the fitness of individuals
+	 * @param sm
+	 *            The selection method to select individuals from the current
+	 *            generation to be part of the next one
+	 * @param re
+	 *            The reproduction environment used to genetically modify
+	 *            individuals
+	 * @param maxNumGenerations
+	 *            The maximum number of generations
+	 * @param targetFitness
+	 *            The optimal value of the fitness function (set to positive
+	 *            infinity if not known)
+	 * @param fitnessEpsilon
+	 *            The error allowed when comparing the floating point
+	 *            targetFitness with the current best fitness
+	 * @return The result of the GEP execution.
+	 */
 	public static <T> GepResult<T> run(Individual<T>[] population, FitnessEnvironment<T> fe, SelectionMethod sm,
-			ReproductionEnvironment re, int maxNumGenerations, double targetFitness) {
+			ReproductionEnvironment re, final int maxNumGenerations, final double targetFitness,
+			final double fitnessEpsilon) {
 
 		int bestIndividualIdx;
 		double fitnessOfBestIndividual;
@@ -45,17 +76,42 @@ public class GeneExpressionProgramming {
 			System.out.println(
 					"Finished generation " + currentGeneration + " (Best fitness: " + fitnessOfBestIndividual + ")");
 
-		} while (fitnessOfBestIndividual < targetFitness && currentGeneration < maxNumGenerations);
+		} while (Math.abs(fitnessOfBestIndividual - targetFitness) < fitnessEpsilon
+				&& currentGeneration < maxNumGenerations);
 
-		try {
-			population[bestIndividualIdx].writeToFile(Paths.get("./test.ser"));
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		
-		return new GepResult<>(currentGeneration, maxNumGenerations, population[bestIndividualIdx]);
+		return new GepResult<>(currentGeneration, maxNumGenerations, population[bestIndividualIdx], targetFitness);
+	}
+
+	/**
+	 * Runs Gene Expression Programming to find a solution to the problem
+	 * defined by the given parameters. </br>
+	 * This function will modify and update the given population array per
+	 * generation. </br>
+	 * This function sets the allowed error to zero. It is therefore only
+	 * recommended for integer fitness functions. In case of possible floating
+	 * point values use the overloaded functions that takes an epsilon as last
+	 * parameter.
+	 * 
+	 * @param population
+	 *            The initial population
+	 * @param fe
+	 *            The fitness environment used to assess the fitness of individuals
+	 * @param sm
+	 *            The selection method to select individuals from the current
+	 *            generation to be part of the next one
+	 * @param re
+	 *            The reproduction environment used to genetically modify
+	 *            individuals
+	 * @param maxNumGenerations
+	 *            The maximum number of generations
+	 * @param targetFitness
+	 *            The optimal value of the fitness function (set to positive
+	 *            infinity if not known)
+	 * @return The result of the GEP execution.
+	 */
+	public static <T> GepResult<T> run(Individual<T>[] population, FitnessEnvironment<T> fe, SelectionMethod sm,
+			ReproductionEnvironment re, final int maxNumGenerations, final double targetFitness) {
+		return run(population, fe, sm, re, maxNumGenerations, targetFitness, 0.0);
 	}
 
 }

@@ -17,6 +17,19 @@ package gep;
 
 import gep.model.Individual;
 
+/**
+ * This class is the abstract class that has to be inherited from to implement
+ * the fitness environment used to assess the fitness of individuals in the
+ * formulation of a GEP problem.
+ * 
+ * TODO parallelize
+ * 
+ * @author Johannes Wortmann
+ *
+ * @param <T>
+ *            The type parameter of individuals (= return type of expression
+ *            tree nodes) in the population to be assessed.
+ */
 public abstract class FitnessEnvironment<T> {
 
 	/**

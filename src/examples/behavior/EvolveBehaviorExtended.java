@@ -28,11 +28,13 @@ import examples.behavior.fitness.EvaluationEnvironment;
 import examples.behavior.functions.InversionFunction;
 import examples.behavior.functions.SelectorFunction;
 import examples.behavior.functions.SequenceFunction;
+import examples.behavior.terminals.CheckMemoryTerminal;
 import examples.behavior.terminals.EmptyInFrontCheckTerminal;
 import examples.behavior.terminals.FoodInFrontCheckTerminal;
 import examples.behavior.terminals.MarkFieldTerminal;
 import examples.behavior.terminals.MarkerInFrontCheckTerminal;
 import examples.behavior.terminals.PheroInFrontCheckTerminal;
+import examples.behavior.terminals.SetMemoryTerminal;
 import examples.behavior.terminals.StepTerminal;
 import examples.behavior.terminals.TurnLeftTerminal;
 import examples.behavior.terminals.TurnRightTerminal;
@@ -63,20 +65,20 @@ public class EvolveBehaviorExtended {
 	public static final int MAX_NUM_GENERATIONS = 100;
 	public static boolean USE_CLASSIC_FITNESS_FUNCTION = true;
 
-	public static final int START_CONFIGURATION = 1;
+	public static final int START_CONFIGURATION = 3;
 
 	// start total chromosome heads length (inclusive)
-	public static final int MIN_CHROMOSOME_HEAD_LENGTH = 3;
+	public static final int MIN_CHROMOSOME_HEAD_LENGTH = 12;
 	// end total chromosome heads length (inclusive)
-	public static final int MAX_CHROMOSOME_HEAD_LENGTH = 20;
+	public static final int MAX_CHROMOSOME_HEAD_LENGTH = 12;
 	// the total length of the chromosome heads (sum of all gene head lengths)
 	public static int chromosomeHeadLength = 12;
 
-	public static final int NUM_ITERATRIONS_FOR_BENCHMARK = 1000;
+	public static final int NUM_ITERATRIONS_FOR_BENCHMARK = 1;
 	
-	public static final int NUM_FOOD = 135;
+	public static final int NUM_FOOD = 67;//135;
 	
-	public static final String SUB_DIR = "all_maps";
+	public static final String SUB_DIR = "lecture_branch_map";
 
 	public static final BehaviorFitnessFunction FITNESSFUNCTION_PER_MAP = USE_CLASSIC_FITNESS_FUNCTION
 			? new ClassicFitnessFunction() : new AlternativeFitnessFunction();
@@ -245,6 +247,8 @@ public class EvolveBehaviorExtended {
 		potentialStepTerminals.add(new EmptyInFrontCheckTerminal(env));
 		potentialStepTerminals.add(new PheroInFrontCheckTerminal(env));
 		potentialStepTerminals.add(new MarkerInFrontCheckTerminal(env));
+		
+		potentialStepTerminals.add(new CheckMemoryTerminal(env));
 
 		ChromosomalArchitecture<Boolean> chromosomeFactory = new ChromosomalArchitecture<>();
 		int basicGeneId = chromosomeFactory
@@ -257,6 +261,10 @@ public class EvolveBehaviorExtended {
 		potentialHomoeoticGeneTerminals.add(new HomoeoticGeneElement<>(basicGeneId));
 		potentialHomoeoticGeneTerminals.add(new MarkFieldTerminal(env, true));
 		potentialHomoeoticGeneTerminals.add(new MarkFieldTerminal(env, false));
+		
+	//	potentialHomoeoticGeneTerminals.add(new CheckMemoryTerminal(env));
+	//	potentialHomoeoticGeneTerminals.add(new SetMemoryTerminal(env, true));
+	//	potentialHomoeoticGeneTerminals.add(new SetMemoryTerminal(env, false));
 
 		int homoeoticGeneId = chromosomeFactory
 				.addGene(new GeneArchitecture<>((int) Math.ceil(chromosomeHeadLength * 2.0 / 3.0),
@@ -285,9 +293,9 @@ public class EvolveBehaviorExtended {
 		ArrayList<WorldMap> maps = new ArrayList<WorldMap>();
 		System.out.print("Create maps...");
 		try {
-			maps.add(new WorldMap(Paths.get("src/examples/behavior/maps/lecturemap.txt")));
+//			maps.add(new WorldMap(Paths.get("src/examples/behavior/maps/lecturemap.txt")));
 			maps.add(new WorldMap(Paths.get("src/examples/behavior/maps/branchmap.txt")));
-			maps.add(new WorldMap(Paths.get("src/examples/behavior/maps/maze1.txt")));
+//			maps.add(new WorldMap(Paths.get("src/examples/behavior/maps/maze1.txt")));
 		} catch (IOException e) {
 			e.printStackTrace();
 			return null;

@@ -34,6 +34,9 @@ public class EvaluationEnvironment extends FitnessEnvironment<Boolean> {
 	private int posAgentX;
 	private int posAgentY;
 	private Orientation agentOrientation;
+	
+	// a one bit memory for the agent
+	private boolean agentMemory;
 
 	// TODO maybe change 2d array to 1d array
 	//private Field[][] grid;
@@ -54,7 +57,7 @@ public class EvaluationEnvironment extends FitnessEnvironment<Boolean> {
 	// the different maps (fitness cases) for generalization
 	protected final WorldMap[] maps;
 
-	protected WorldMap currentMap; // TODO resolve redundancy with grid
+	protected WorldMap currentMap;
 
 	public EvaluationEnvironment(WorldMap[] maps, BehaviorFitnessFunction fitnessFunctionPerMap) {
 		this.maps = maps;
@@ -179,6 +182,7 @@ public class EvaluationEnvironment extends FitnessEnvironment<Boolean> {
 
 		for (WorldMap map : maps) {
 
+			// TODO move to init function
 			fitnessFunction.resetFitnessScorePerMap();
 			foodConsumed = 0;
 			movedDistance = 0;
@@ -189,6 +193,7 @@ public class EvaluationEnvironment extends FitnessEnvironment<Boolean> {
 			posAgentX = map.getStartPositionX();
 			posAgentY = map.getStartPositionY();
 			setAgentOrientation(map.getStartOrientation());
+			agentMemory = false;
 
 			// single chromosome individuals (only one program)
 			ExpressionTreeNode<Boolean> currentProgram = individual.getExpressionTrees().get(0);
@@ -230,6 +235,19 @@ public class EvaluationEnvironment extends FitnessEnvironment<Boolean> {
 		this.totalFitnessScore = 0;
 		this.foodConsumed = 0;
 		this.movedDistance = 0;
+		this.agentMemory = false;
+	}
+
+	protected int getFoodConsumed() {
+		return foodConsumed;
+	}
+
+	public boolean getAgentMemory() {
+		return agentMemory;
+	}
+
+	public void setAgentMemory(boolean agentMemory) {
+		this.agentMemory = agentMemory;
 	}
 
 }
