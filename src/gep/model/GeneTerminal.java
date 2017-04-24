@@ -17,21 +17,54 @@ package gep.model;
 
 import java.util.List;
 
+/**
+ * This class represents a gene terminal. It is a leaf in an expression tree and
+ * therefore its apply method does not get any childs as parameters.
+ * 
+ * @author Johannes Wortmann
+ *
+ * @param <T>
+ *            The return type of the execution of this terminal
+ */
 public abstract class GeneTerminal<T> extends GeneElement<T> {
-	
-	public GeneTerminal(String description, String shortDescription) {
+
+	/**
+	 * The version UID used for serialization.
+	 */
+	private static final long serialVersionUID = -4752231745136597874L;
+
+	/**
+	 * Constructor for creating a gene terminal (leaf in an expression tree).
+	 * 
+	 * @param description
+	 *            A string describing the function of the terminal
+	 * @param shortDescription
+	 *            A short form used to generate the string representation of the
+	 *            terminal.
+	 */
+	protected GeneTerminal(String description, String shortDescription) {
 		super(description, shortDescription);
 	}
-	
+
 	@Override
-	final public int getArity() {
+	public final int getArity() {
 		return 0;
 	}
-	
+
+	@Override
 	public final T apply(List<ExpressionTreeNode<T>> expTreeChilds, Chromosome<T> executingChromosome) {
 		return apply(executingChromosome);
 	}
-	
+
+	/**
+	 * Executes this terminal and returns its result.
+	 * 
+	 * @param executingChromosome
+	 *            A reference to the chromosome that includes this terminal and
+	 *            wants to execute it.
+	 * 
+	 * @return The result of the execution of this terminal
+	 */
 	public abstract T apply(Chromosome<T> executingChromosome);
-	
+
 }

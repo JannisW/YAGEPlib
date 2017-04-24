@@ -24,6 +24,11 @@ import gep.random.RandomEngine;
 
 public class RandomChoiceFunction extends GeneFunction<Boolean> {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1131663166244611831L;
+	
 	private RandomEngine random;
 
 	public RandomChoiceFunction() {

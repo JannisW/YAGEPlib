@@ -19,14 +19,38 @@ import gep.model.Individual;
 import gep.random.DefaultRandomEngine;
 import gep.random.RandomEngine;
 
+/**
+ * <p>
+ * This class implements stochastic universal sampling
+ * </p>
+ * 
+ * TODO currently just a stub. Has to be implemented.
+ * 
+ * @author Johannes Wortmann
+ *
+ */
 public class StochasticUniversalSampling implements SelectionMethod {
-	
+
+	/**
+	 * The used random engine
+	 */
 	private RandomEngine random;
 
+	/**
+	 * Creates an instance of the stochastic universal sampling algorithm using
+	 * the default random engine.
+	 */
 	public StochasticUniversalSampling() {
 		random = new DefaultRandomEngine();
 	}
 
+	/**
+	 * Creates an instance of the stochastic universal sampling algorithm using
+	 * the given random engine.
+	 * 
+	 * @param random
+	 *            The random engine to be used by this selection method.
+	 */
 	public StochasticUniversalSampling(RandomEngine random) {
 		this.random = random;
 	}
@@ -40,7 +64,7 @@ public class StochasticUniversalSampling implements SelectionMethod {
 	public <T> int select(Individual<T>[] population, RandomEngine random) {
 		// TODO Auto-generated method stub
 		throw new UnsupportedOperationException("Method not implemented yet");
-		
+
 		// no elite preservation
 		// return 0;
 	}

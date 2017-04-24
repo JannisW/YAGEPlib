@@ -19,6 +19,13 @@ import java.util.ArrayList;
 
 import gep.model.GeneElement;
 
+/**
+ * This interface defines all methods required for a random engine used by this
+ * GEP framework.
+ * 
+ * @author Johannes Wortmann
+ *
+ */
 public interface RandomEngine {
 
 	/**

@@ -21,13 +21,13 @@ import gep.random.RandomEngine;
 public interface SelectionMethod {
 
 	/**
-	 * Randomly selects individuals from a the current population to create a
-	 * new one based on their fitness.
+	 * <p>Randomly selects individuals from a the current population to create a
+	 * new one based on their fitness.</p>
 	 * 
-	 * The returned index defines from which index in the population array later
+	 * <p>The returned index defines from which index in the population array later
 	 * reproduction is allowed to occur. If the returned value is for example 2,
 	 * it means that all following genetic operators should not change the
-	 * elements at index 0 and 1.
+	 * elements at index 0 and 1.</p>
 	 * 
 	 * @param population
 	 *            The population which should be changed.
@@ -38,13 +38,13 @@ public interface SelectionMethod {
 	public <T> int select(Individual<T>[] population);
 
 	/**
-	 * Randomly selects individuals from a the current population to create a
-	 * new one based on their fitness.
+	 * <p>Randomly selects individuals from a the current population to create a
+	 * new one based on their fitness.</p>
 	 * 
-	 * The returned index defines from which index in the population array later
+	 * <p>The returned index defines from which index in the population array later
 	 * reproduction is allowed to occur. If the returned value is for example 2,
 	 * it means that all following genetic operators should not change the
-	 * elements at index 0 and 1.
+	 * elements at index 0 and 1.</p>
 	 * 
 	 * @param population
 	 *            The population which should be changed.

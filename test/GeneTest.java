@@ -120,6 +120,11 @@ public class GeneTest {
 
 	class GenericOneArgFunc extends GeneFunction<Boolean> {
 
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
+
 		public GenericOneArgFunc(int id) {
 			super("generic one arg func (ID=" + id + ")", "o" + id, 1);
 		}
@@ -134,6 +139,11 @@ public class GeneTest {
 
 	class GenericTwoArgFunc extends GeneFunction<Boolean> {
 
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
+
 		public GenericTwoArgFunc(int id) {
 			super("generic two arg func (ID=" + id + ")", "d" + id, 2);
 		}
@@ -147,6 +157,11 @@ public class GeneTest {
 	}
 
 	class GenericTerminal extends ChromosomeIndependentGeneTerminal<Boolean> {
+
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
 
 		public GenericTerminal(int id) {
 			super("generic terminal(ID=" + id + ")", "t" + id);

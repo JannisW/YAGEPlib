@@ -33,26 +33,66 @@ import gep.random.RandomEngine;
  */
 public class ChromosomalArchitecture<T> {
 
+	/**
+	 * The list of modifiable genes of the chromosomes created by this factory
+	 */
 	private ArrayList<Gene<T>> genes;
+
+	/**
+	 * The list of immutable genes (e.g. static linking functions) of the
+	 * chromosomes created by this factory
+	 */
 	private ArrayList<Gene<T>> immutableGenes;
 
+	/**
+	 * The unmodifiable root gene of the chromosome created by this factory
+	 */
 	private Gene<T> rootGene = null;
 
+	/**
+	 * Creates a new factory for Chromosomes. Initially the chromosomes don't
+	 * have any genes.
+	 */
 	public ChromosomalArchitecture() {
 		this.genes = new ArrayList<Gene<T>>();
 		this.immutableGenes = new ArrayList<Gene<T>>();
 		this.rootGene = null;
 	}
 
+	/**
+	 * Creates a new factory for Chromosomes. Initially the chromosomes contain
+	 * the given genes.
+	 * 
+	 * @param genes
+	 *            The genes of chromosomes produced by this factory
+	 */
 	public ChromosomalArchitecture(List<Gene<T>> genes) {
 		this();
 		addGenes(genes);
 	}
 
+	/**
+	 * Adds a gene to the chromosomes produced by this factory.
+	 * 
+	 * @param geneArch
+	 *            The architecture of the gene that should be added to the
+	 *            chromsome.
+	 * @return The unique geneId that identifies a gene in the chromosomes.
+	 */
 	public int addGene(GeneArchitecture<T> geneArch) {
 		return addGene(geneArch.createRandomGene());
 	}
 
+	/**
+	 * Adds a gene by its sequence to the chromosomes produced by this factory.
+	 * The architecture is inferred from the sequence and if the sequence is not
+	 * long enough it will be padded by terminals in the sequence.
+	 * 
+	 * @param sequence
+	 *            The list of elements that define the genes
+	 * 
+	 * @return The unique geneId that identifies a gene in the chromosomes.
+	 */
 	public int addGene(List<GeneElement<T>> sequence) {
 		return addGene(GeneArchitecture.createGeneFromSequence(sequence));
 	}

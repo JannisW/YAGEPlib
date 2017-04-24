@@ -15,9 +15,34 @@
  */
 package gep.model;
 
+/**
+ * This class represents a gene terminal whose execution is independent from the
+ * chromosome it is included in. That means its apply method does not need the
+ * chromosome as a parameter.
+ * 
+ * @author Johannes Wortmann
+ *
+ * @param <T>
+ *            The return type of the execution of this terminal
+ */
 public abstract class ChromosomeIndependentGeneTerminal<T> extends GeneTerminal<T> {
 
-	public ChromosomeIndependentGeneTerminal(String description, String shortDescription) {
+	/**
+	 * The version UID used for serialization.
+	 */
+	private static final long serialVersionUID = -1555228040137706984L;
+
+	/**
+	 * Constructor for creating a gene terminal whose execution is independent
+	 * from the chromosome it is included in.
+	 * 
+	 * @param description
+	 *            A string describing the function of the terminal
+	 * @param shortDescription
+	 *            A short form used to generate the string representation of the
+	 *            terminal.
+	 */
+	protected ChromosomeIndependentGeneTerminal(String description, String shortDescription) {
 		super(description, shortDescription);
 	}
 
@@ -25,7 +50,12 @@ public abstract class ChromosomeIndependentGeneTerminal<T> extends GeneTerminal<
 	public final T apply(Chromosome<T> executingChromosome) {
 		return apply();
 	}
-	
+
+	/**
+	 * Executes this terminal and returns its result.
+	 * 
+	 * @return The result of the execution of this terminal
+	 */
 	public abstract T apply();
 
 }

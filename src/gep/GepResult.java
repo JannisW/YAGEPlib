@@ -78,7 +78,7 @@ public class GepResult<T> {
 	 * @return True, if optimal solution was found. False, otherwise.
 	 */
 	public boolean isOptimalSolution(double epsilon) {
-		return Math.abs(getFitnessOfBestIndivudal() - targetFitness) < epsilon;
+		return Math.abs(targetFitness - getFitnessOfBestIndivudal()) <= epsilon;
 	}
 
 }

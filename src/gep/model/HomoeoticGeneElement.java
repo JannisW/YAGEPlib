@@ -15,15 +15,55 @@
  */
 package gep.model;
 
+/**
+ * This class represents a homoeotic gene terminal. It is a leaf in an
+ * expression tree but links to another gene that will be executed when this
+ * terminal will be executed. This allows to evolve the hierarchy of genes in
+ * GEP by itself.
+ * 
+ * @author Johannes Wortmann
+ *
+ * @param <T>
+ *            The return type of the execution of this terminal
+ */
 public class HomoeoticGeneElement<T> extends GeneTerminal<T> {
 
+	/**
+	 * The version UID used for serialization.
+	 */
+	private static final long serialVersionUID = 4812792159220536809L;
+
+	/**
+	 * The index of the gene in the chromosome that is linked by this homoeotic
+	 * terminal.
+	 */
 	public final int linkedGeneId;
-	
+
+	/**
+	 * Creates a homoeotic gene that links to the gene with the given gene id.
+	 * 
+	 * The description is automatically generated.
+	 * 
+	 * @param linkedGeneId
+	 *            The id of the gene this gene element links to
+	 */
 	public HomoeoticGeneElement(int linkedGeneId) {
-		super("Link to gene with id " + linkedGeneId, "ln"+linkedGeneId);
+		super("Link to gene with id " + linkedGeneId, "ln" + linkedGeneId);
 		this.linkedGeneId = linkedGeneId;
 	}
 
+	/**
+	 * Creates a homoeotic gene that links to the gene with the given gene id.
+	 * 
+	 * @param linkedGeneId
+	 *            The id of the gene this gene element links to
+	 * 
+	 * @param description
+	 *            A string describing the function of the terminal
+	 * @param shortDescription
+	 *            A short form used to generate the string representation of the
+	 *            terminal.
+	 */
 	public HomoeoticGeneElement(String description, String shortDescription, int linkedGeneId) {
 		super(description, shortDescription);
 		this.linkedGeneId = linkedGeneId;

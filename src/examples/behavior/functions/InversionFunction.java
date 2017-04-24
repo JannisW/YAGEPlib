@@ -22,6 +22,11 @@ import gep.model.GeneFunction;
 
 public class InversionFunction extends GeneFunction<Boolean> {
 
+	/**
+	 * The serial version id.
+	 */
+	private static final long serialVersionUID = -7759013993227732330L;
+
 	public InversionFunction() {
 		super("Inversion", "I", 1);
 	}

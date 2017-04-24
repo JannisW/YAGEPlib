@@ -22,6 +22,20 @@ import gep.random.DefaultRandomEngine;
 import gep.random.RandomEngine;
 
 /**
+ * <p>
+ * This class implements a roulette wheel selection algorithm. Individuals are
+ * selected with a probability proportional to their fitness. No elite
+ * preservation is used. If the best individuals of a population should be
+ * preserved check {@link RouletteWheelSelectionWithElitePreservation}.
+ * Individuals can be selected multiple times.
+ * </p>
+ * 
+ * <p>
+ * In some instances, particularly with small population sizes, the randomness
+ * of selection may result in excessively high occurrences of particular
+ * candidates. If this is a problem, {@link StochasticUniversalSampling}
+ * provides an alternative fitness-proportionate strategy for selection.
+ * </p>
  * 
  * Based on:
  * https://github.com/dwdyer/watchmaker/blob/master/framework/src/java/main/org/uncommons/watchmaker/framework/selection/RouletteWheelSelection.java
@@ -31,21 +45,91 @@ import gep.random.RandomEngine;
  */
 public class RouletteWheelSelection implements SelectionMethod {
 
+	/**
+	 * The used random engine
+	 */
 	private RandomEngine random;
 
+	/**
+	 * Creates an instance of the roulette wheel selection algorithm using the
+	 * default random engine.
+	 */
 	public RouletteWheelSelection() {
 		random = new DefaultRandomEngine();
 	}
 
+	/**
+	 * Creates an instance of the roulette wheel selection algorithm using the
+	 * provided random engine.
+	 * 
+	 * @param random
+	 *            The random engine to be used by this selection method.
+	 */
 	public RouletteWheelSelection(RandomEngine random) {
 		this.random = random;
 	}
 
+	/**
+	 * <p>
+	 * Randomly selects individuals from a the current population to create a
+	 * new one based on their fitness.
+	 * </p>
+	 * 
+	 * <p>
+	 * Individuals are selected with a probability proportional to their
+	 * fitness. No elite preservation is used. If the best individuals of a
+	 * population should be preserved check
+	 * {@link RouletteWheelSelectionWithElitePreservation}. Individuals can be
+	 * selected multiple times.
+	 * </p>
+	 * 
+	 * <p>
+	 * The returned index defines from which index in the population array later
+	 * reproduction is allowed to occur. If the returned value is for example 2,
+	 * it means that all following genetic operators should not change the
+	 * elements at index 0 and 1.
+	 * </p>
+	 * 
+	 * @param population
+	 *            The population which should be changed.
+	 * 
+	 * @return The index (inclusive) from which later reproduction is allowed to
+	 *         occur.
+	 */
 	@Override
 	public <T> int select(Individual<T>[] population) {
 		return select(population, this.random);
 	}
 
+	/**
+	 * <p>
+	 * Randomly selects individuals from a the current population to create a
+	 * new one based on their fitness.
+	 * </p>
+	 * 
+	 * <p>
+	 * Individuals are selected with a probability proportional to their
+	 * fitness. No elite preservation is used. If the best individuals of a
+	 * population should be preserved check
+	 * {@link RouletteWheelSelectionWithElitePreservation}. Individuals can be
+	 * selected multiple times.
+	 * </p>
+	 * 
+	 * <p>
+	 * The returned index defines from which index in the population array later
+	 * reproduction is allowed to occur. If the returned value is for example 2,
+	 * it means that all following genetic operators should not change the
+	 * elements at index 0 and 1.
+	 * </p>
+	 * 
+	 * @param population
+	 *            The population which should be changed.
+	 * @param random
+	 *            The RandomEngine to be used
+	 * 
+	 * @return The index (inclusive) from which later reproduction is allowed to
+	 *         occur.
+	 */
 	@Override
 	public <T> int select(Individual<T>[] population, RandomEngine random) {
 

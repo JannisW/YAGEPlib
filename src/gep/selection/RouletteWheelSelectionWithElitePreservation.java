@@ -23,30 +23,141 @@ import gep.model.Individual;
 import gep.random.DefaultRandomEngine;
 import gep.random.RandomEngine;
 
+/**
+ * <p>
+ * This class implements a roulette wheel selection algorithm. Individuals are
+ * selected with a probability proportional to their fitness. The best
+ * individuals of a population are preserved. If this is not intended check
+ * {@link RouletteWheelSelection}. Individuals can be selected multiple times.
+ * </p>
+ * 
+ * <p>
+ * In some instances, particularly with small population sizes, the randomness
+ * of selection may result in excessively high occurrences of particular
+ * candidates. If this is a problem, {@link StochasticUniversalSampling}
+ * provides an alternative fitness-proportionate strategy for selection.
+ * </p>
+ * 
+ * Based on:
+ * https://github.com/dwdyer/watchmaker/blob/master/framework/src/java/main/org/uncommons/watchmaker/framework/selection/RouletteWheelSelection.java
+ * 
+ * @author Johannes Wortmann, (Daniel Dyer)
+ *
+ */
 public class RouletteWheelSelectionWithElitePreservation implements SelectionMethod {
 
+	/**
+	 * The used random engine
+	 */
 	private RandomEngine random;
 
+	/**
+	 * The fraction [0.0, 1.0] of individuals that should be preserved as elite.
+	 */
 	private final double preservationPercentage;
 
+	/**
+	 * Creates an instance of the roulette wheel selection algorithm with elite
+	 * preservation using the default random engine and a preservation
+	 * percentage of 10% (The best 10% of the population are guaranteed to be
+	 * selected).
+	 */
 	public RouletteWheelSelectionWithElitePreservation() {
 		this(new DefaultRandomEngine(), 0.1);
 	}
 
+	/**
+	 * Creates an instance of the roulette wheel selection algorithm with elite
+	 * preservation using the default random engine and the given preservation
+	 * percentage in the interval [0.0, 1.0]. A preservation percentage of 0.1
+	 * means a that the best 10% of the population are guaranteed to be
+	 * selected.
+	 * 
+	 * @param preservationPercentage
+	 *            The preservation percentage in the interval [0.0, 1.0]
+	 */
 	public RouletteWheelSelectionWithElitePreservation(double preservationPercentage) {
 		this(new DefaultRandomEngine(), preservationPercentage);
 	}
 
+	/**
+	 * Creates an instance of the roulette wheel selection algorithm with elite
+	 * preservation using the given random engine and the given preservation
+	 * percentage in the interval [0.0, 1.0]. A preservation percentage of 0.1
+	 * means a that the best 10% of the population are guaranteed to be
+	 * selected.
+	 * 
+	 * @param random
+	 *            The random engine to be used by this selection method
+	 * 
+	 * @param preservationPercentage
+	 *            The preservation percentage in the interval [0.0, 1.0]
+	 */
 	public RouletteWheelSelectionWithElitePreservation(RandomEngine random, double preservationPercentage) {
 		this.random = random;
 		this.preservationPercentage = preservationPercentage;
 	}
 
+	/**
+	 * <p>
+	 * Randomly selects individuals from a the current population to create a
+	 * new one based on their fitness.
+	 * </p>
+	 * 
+	 * <p>
+	 * Individuals are selected with a probability proportional to their
+	 * fitness. The best individuals of a population are preserved (determined
+	 * by the preservation percentage provided at construction). Individuals can
+	 * be selected multiple times.
+	 * </p>
+	 * 
+	 * <p>
+	 * The returned index defines from which index in the population array later
+	 * reproduction is allowed to occur. If the returned value is for example 2,
+	 * it means that all following genetic operators should not change the
+	 * elements at index 0 and 1.
+	 * </p>
+	 * 
+	 * @param population
+	 *            The population which should be changed.
+	 * 
+	 * @return The index (inclusive) from which later reproduction is allowed to
+	 *         occur.
+	 */
 	@Override
 	public <T> int select(Individual<T>[] population) {
 		return select(population, this.random);
 	}
 
+	/**
+	 * <p>
+	 * Randomly selects individuals from a the current population to create a
+	 * new one based on their fitness.
+	 * </p>
+	 * 
+	 * <p>
+	 * Individuals are selected with a probability proportional to their
+	 * fitness. The best individuals of a population are preserved (determined
+	 * by the preservation percentage provided at construction). Individuals can
+	 * be selected multiple times.
+	 * </p>
+	 * 
+	 * <p>
+	 * The returned index defines from which index in the population array later
+	 * reproduction is allowed to occur. If the returned value is for example 2,
+	 * it means that all following genetic operators should not change the
+	 * elements at index 0 and 1.
+	 * </p>
+	 * 
+	 * @param population
+	 *            The population which should be changed.
+	 * 
+	 * @param random
+	 *            The RandomEngine to be used
+	 * 
+	 * @return The index (inclusive) from which later reproduction is allowed to
+	 *         occur.
+	 */
 	@Override
 	public <T> int select(Individual<T>[] population, RandomEngine random) {
 
@@ -109,7 +220,11 @@ public class RouletteWheelSelectionWithElitePreservation implements SelectionMet
 		return numElitesPreserved;
 	}
 
-	class IndexedIndividualComparator<T> implements Comparator<Integer> {
+	/**
+	 * Used to compare individuals based on their indicies in the oldPopulation
+	 * array and their compareTo methods.
+	 */
+	private class IndexedIndividualComparator<T> implements Comparator<Integer> {
 
 		private final Individual<T>[] oldPopulation;
 

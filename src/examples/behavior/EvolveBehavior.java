@@ -60,18 +60,23 @@ import gep.random.DefaultRandomEngine;
 import gep.selection.RouletteWheelSelectionWithElitePreservation;
 import gep.selection.SelectionMethod;
 
+/**
+ * 
+ * @author Johannes Wortmann
+ *
+ */
 public class EvolveBehavior {
 
 	public static final int NUM_INDIVIDUALS = 50;
 	public static final int MAX_NUM_GENERATIONS = 100;
 	public static boolean USE_CLASSIC_FITNESS_FUNCTION = true;
 
-	public static final int START_CONFIGURATION = 3;
-
+	public static final int[] START_CONFIGURATIONS = {3};
+	
 	// start total chromosome heads length (inclusive)
-	public static final int MIN_CHROMOSOME_HEAD_LENGTH = 3;
+	public static final int MIN_CHROMOSOME_HEAD_LENGTH = 17;
 	// end total chromosome heads length (inclusive)
-	public static final int MAX_CHROMOSOME_HEAD_LENGTH = 9;
+	public static final int MAX_CHROMOSOME_HEAD_LENGTH = 17;
 	// the total length of the chromosome heads (sum of all gene head lengths)
 	public static int chromosomeHeadLength = 12; // 16
 
@@ -80,60 +85,78 @@ public class EvolveBehavior {
 	public static final BehaviorFitnessFunction FITNESSFUNCTION_PER_MAP = USE_CLASSIC_FITNESS_FUNCTION
 			? new ClassicFitnessFunction() : new AlternativeFitnessFunction();
 
+	// the best possible value of the fitness function (for the classic ant
+	// tracker map)
+	public static final double MAX_FITNESS_VALUE = USE_CLASSIC_FITNESS_FUNCTION ? 44.0 : Double.MAX_VALUE;
+
 	public static void main(String[] args) {
 
 		double bestFitness = -1.0;
-
-		for (chromosomeHeadLength = MIN_CHROMOSOME_HEAD_LENGTH; chromosomeHeadLength <= MAX_CHROMOSOME_HEAD_LENGTH; chromosomeHeadLength++) {
-
-			String suffix = "";
-			if (START_CONFIGURATION == 0) {
-				suffix = "_solution";
-			} else if (START_CONFIGURATION == 1) {
-				suffix = "_singleChrom";
-			} else if (START_CONFIGURATION == 2) {
-				suffix = "_twoGeneChromSpecNormal";
-			} else if (START_CONFIGURATION == 3) {
-				suffix = "_twoGeneChromSpec";
-			}
-
-			try (BufferedWriter bw = new BufferedWriter(new FileWriter(
-					Paths.get("benchmarks", "lecturemap", "benchresult" + chromosomeHeadLength + suffix + ".tsv")
-							.toFile()))) {
-
-				bw.write("num_gen\tmax_gen\tbest_fitness\tlen_chromosome");
-				bw.newLine();
-
-				for (int i = 0; i < NUM_ITERATRIONS_FOR_BENCHMARK; i++) {
-
-					GepResult<Boolean> r = null;
-					if (START_CONFIGURATION == 0) {
-						r = startWithSolution();
-					} else if (START_CONFIGURATION == 1) {
-						r = startGeneConfiguration1();
-					} else if (START_CONFIGURATION == 2) {
-						r = startGeneConfiguration2();
-					} else if (START_CONFIGURATION == 3) {
-						r = startGeneConfiguration3();
-					}
-
-					bw.write(r.numGenerations + "\t" + r.maxGenrations + "\t" + r.getFitnessOfBestIndivudal() + "\t"
-							+ chromosomeHeadLength);
-					bw.newLine();
-
-					if (r.getFitnessOfBestIndivudal() > bestFitness) {
-						r.bestIndividual.writeToFile(Paths.get("./bestIndividual.ser"));
-						bestFitness = r.getFitnessOfBestIndivudal();
-					}
-
+		
+		for (int startConfig : START_CONFIGURATIONS) {
+			
+			for (chromosomeHeadLength = MIN_CHROMOSOME_HEAD_LENGTH; chromosomeHeadLength <= MAX_CHROMOSOME_HEAD_LENGTH; chromosomeHeadLength++) {
+	
+				String suffix = "";
+				if (startConfig == 0) {
+					suffix = "_solution";
+				} else if (startConfig == 1) {
+					suffix = "_singleChrom";
+				} else if (startConfig == 2) {
+					suffix = "_twoGeneChromSpecNormal";
+				} else if (startConfig == 3) {
+					suffix = "_twoGeneChromSpec";
+				} else {
+					throw new IllegalArgumentException(startConfig + " is not a valid start configuration");
 				}
-
-			} catch (IOException e) {
-				// Auto-generated catch block
-				e.printStackTrace();
+	
+				try (BufferedWriter bw = new BufferedWriter(new FileWriter(
+						Paths.get("benchmarks", "lecturemap", "benchresult" + chromosomeHeadLength + suffix + ".tsv")
+								.toFile()))) {
+	
+					bw.write("num_gen\tmax_gen\tbest_fitness\tlen_chromosome");
+					bw.newLine();
+					
+					long totalTime = 0;
+	
+					for (int i = 0; i < NUM_ITERATRIONS_FOR_BENCHMARK; i++) {
+	
+						long startTime = System.currentTimeMillis();
+						
+						GepResult<Boolean> r = null;
+						if (startConfig == 0) {
+							r = startWithSolution();
+						} else if (startConfig == 1) {
+							r = startGeneConfiguration1();
+						} else if (startConfig == 2) {
+							r = startGeneConfiguration2();
+						} else if (startConfig == 3) {
+							r = startGeneConfiguration3();
+						} else {
+							throw new IllegalArgumentException(startConfig + " is not a valid start configuration");
+						}
+						
+						totalTime += System.currentTimeMillis() - startTime;
+	
+						bw.write(r.numGenerations + "\t" + r.maxGenrations + "\t" + r.getFitnessOfBestIndivudal() + "\t"
+								+ chromosomeHeadLength);
+						bw.newLine();
+	
+						if (r.getFitnessOfBestIndivudal() > bestFitness) {
+							r.bestIndividual.writeToFile(Paths.get("./bestIndividual.ser"));
+							bestFitness = r.getFitnessOfBestIndivudal();
+						}
+	
+					}
+					
+					System.out.println("avg Time per run = " + totalTime / NUM_ITERATRIONS_FOR_BENCHMARK + "ms");
+	
+				} catch (IOException e) {
+					// Auto-generated catch block
+					e.printStackTrace();
+				}
 			}
 		}
-
 	}
 
 	/**
@@ -142,7 +165,6 @@ public class EvolveBehavior {
 	 * 
 	 * @return
 	 */
-	// TODO maybe move to a different class with a new main function
 	private static GepResult<Boolean> startGeneConfiguration1() {
 
 		ArrayList<WorldMap> maps = createMaps();
@@ -152,7 +174,6 @@ public class EvolveBehavior {
 		supportedBehaviorTreeNodes.add(new SelectorFunction());
 		supportedBehaviorTreeNodes.add(new SequenceFunction());
 		supportedBehaviorTreeNodes.add(new InversionFunction());
-		// TODO support more nodes (including random)
 
 		ArrayList<GeneTerminal<Boolean>> potentialTerminals = new ArrayList<GeneTerminal<Boolean>>(7);
 		potentialTerminals.add(new StepTerminal(env));
@@ -184,9 +205,7 @@ public class EvolveBehavior {
 
 		SelectionMethod sm = new RouletteWheelSelectionWithElitePreservation(0.05);
 
-		return GeneExpressionProgramming.run(population, env, sm, re, MAX_NUM_GENERATIONS, 44.0);
-		// GeneExpressionProgramming.run(population, env, sm, re,
-		// MAX_NUM_GENERATIONS, Double.MAX_VALUE);
+		return GeneExpressionProgramming.run(population, env, sm, re, MAX_NUM_GENERATIONS, MAX_FITNESS_VALUE);
 	}
 
 	/**
@@ -243,9 +262,7 @@ public class EvolveBehavior {
 
 		SelectionMethod sm = new RouletteWheelSelectionWithElitePreservation(0.05);
 
-		return GeneExpressionProgramming.run(population, env, sm, re, MAX_NUM_GENERATIONS, 44.0);
-		// return GeneExpressionProgramming.run(population, env, sm, re,
-		// MAX_NUM_GENERATIONS, Double.MAX_VALUE);
+		return GeneExpressionProgramming.run(population, env, sm, re, MAX_NUM_GENERATIONS, MAX_FITNESS_VALUE);
 	}
 
 	/**
@@ -266,7 +283,6 @@ public class EvolveBehavior {
 		supportedBehaviorTreeNodes.add(new SelectorFunction());
 		supportedBehaviorTreeNodes.add(new SequenceFunction());
 		supportedBehaviorTreeNodes.add(new InversionFunction());
-		// TODO support more nodes (including random)
 
 		// create step controlling gene
 		ArrayList<GeneTerminal<Boolean>> potentialStepTerminals = new ArrayList<GeneTerminal<Boolean>>(7);
@@ -317,9 +333,7 @@ public class EvolveBehavior {
 
 		SelectionMethod sm = new RouletteWheelSelectionWithElitePreservation(0.05);
 
-		return GeneExpressionProgramming.run(population, env, sm, re, MAX_NUM_GENERATIONS, 44.0);
-		// return GeneExpressionProgramming.run(population, env, sm, re,
-		// MAX_NUM_GENERATIONS, Double.MAX_VALUE);
+		return GeneExpressionProgramming.run(population, env, sm, re, MAX_NUM_GENERATIONS, MAX_FITNESS_VALUE);
 	}
 
 	private static GepResult<Boolean> startWithSolution() {
@@ -392,19 +406,13 @@ public class EvolveBehavior {
 
 		SelectionMethod sm = new RouletteWheelSelectionWithElitePreservation(0.05);
 
-		return GeneExpressionProgramming.run(population, env, sm, re, 1,
-				44.0 /* Best value for classic map */);
-
-		// GeneExpressionProgramming.run(population, env, sm, re,
-		// MAX_NUM_GENERATIONS,
-		// 44.0 /* Best value for classic map */);
+		return GeneExpressionProgramming.run(population, env, sm, re, MAX_NUM_GENERATIONS, MAX_FITNESS_VALUE);
 	}
 
 	private static ArrayList<WorldMap> createMaps() {
 		ArrayList<WorldMap> maps = new ArrayList<WorldMap>();
 		System.out.print("Create maps...");
 		try {
-			// TODO actually build multiple scenarios and add them
 			maps.add(new WorldMap(Paths.get("src/examples/behavior/maps/lecturemap.txt")));
 		} catch (IOException e) {
 			e.printStackTrace();

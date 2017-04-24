@@ -23,6 +23,8 @@ import gep.model.GeneElement;
 /**
  * An implementation of the RandomEngine interface by using Java's default
  * random generator.
+ * 
+ * @author Johannes Wortmann
  */
 public class DefaultRandomEngine extends Random implements RandomEngine {
 
@@ -31,9 +33,19 @@ public class DefaultRandomEngine extends Random implements RandomEngine {
 	 */
 	private static final long serialVersionUID = -7574675804698581874L;
 
+	/**
+	 * Creates an instance of the default random engine with the current time as
+	 * seed.
+	 */
 	public DefaultRandomEngine() {
+		super();
 	}
 
+	/**
+	 * Creates an instance of the default random engine with the given seed.
+	 * 
+	 * @param seed
+	 */
 	public DefaultRandomEngine(long seed) {
 		super(seed);
 	}

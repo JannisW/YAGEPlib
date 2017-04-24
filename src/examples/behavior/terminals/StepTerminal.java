@@ -42,7 +42,7 @@ public class StepTerminal extends EnvironmentDependendTerminal<Boolean> {
 		case WEST:
 			return env.moveTo(env.getPosAgentX() - 1, env.getPosAgentY());
 		}
-		return true;
+		return false;
 	}
 
 }

@@ -36,7 +36,8 @@ public class GeneExpressionProgramming {
 	 * @param population
 	 *            The initial population
 	 * @param fe
-	 *            The fitness environment used to assess the fitness of individuals
+	 *            The fitness environment used to assess the fitness of
+	 *            individuals
 	 * @param sm
 	 *            The selection method to select individuals from the current
 	 *            generation to be part of the next one
@@ -76,8 +77,12 @@ public class GeneExpressionProgramming {
 			System.out.println(
 					"Finished generation " + currentGeneration + " (Best fitness: " + fitnessOfBestIndividual + ")");
 
-		} while (Math.abs(fitnessOfBestIndividual - targetFitness) < fitnessEpsilon
+		} while (Math.abs(targetFitness - fitnessOfBestIndividual) > fitnessEpsilon
 				&& currentGeneration < maxNumGenerations);
+
+		System.out.println("GEP done: ");
+		System.out.println("           Generations:  " + currentGeneration + " (max=" + maxNumGenerations + ")");
+		System.out.println("           Best fitness: " + fitnessOfBestIndividual + " (max=" + targetFitness + ")");
 
 		return new GepResult<>(currentGeneration, maxNumGenerations, population[bestIndividualIdx], targetFitness);
 	}
@@ -95,7 +100,8 @@ public class GeneExpressionProgramming {
 	 * @param population
 	 *            The initial population
 	 * @param fe
-	 *            The fitness environment used to assess the fitness of individuals
+	 *            The fitness environment used to assess the fitness of
+	 *            individuals
 	 * @param sm
 	 *            The selection method to select individuals from the current
 	 *            generation to be part of the next one
