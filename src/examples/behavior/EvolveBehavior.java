@@ -61,6 +61,10 @@ import gep.selection.RouletteWheelSelectionWithElitePreservation;
 import gep.selection.SelectionMethod;
 
 /**
+ * This class evolves simplified behavior trees to solve the classic ant tracker
+ * task (lecturemap.txt).
+ * 
+ * TODO clean up benchmarks by more convenient parameterization and inheritance.
  * 
  * @author Johannes Wortmann
  *
@@ -71,8 +75,8 @@ public class EvolveBehavior {
 	public static final int MAX_NUM_GENERATIONS = 100;
 	public static boolean USE_CLASSIC_FITNESS_FUNCTION = true;
 
-	public static final int[] START_CONFIGURATIONS = {3};
-	
+	public static final int[] START_CONFIGURATIONS = { 3 };
+
 	// start total chromosome heads length (inclusive)
 	public static final int MIN_CHROMOSOME_HEAD_LENGTH = 17;
 	// end total chromosome heads length (inclusive)
@@ -92,11 +96,11 @@ public class EvolveBehavior {
 	public static void main(String[] args) {
 
 		double bestFitness = -1.0;
-		
+
 		for (int startConfig : START_CONFIGURATIONS) {
-			
+
 			for (chromosomeHeadLength = MIN_CHROMOSOME_HEAD_LENGTH; chromosomeHeadLength <= MAX_CHROMOSOME_HEAD_LENGTH; chromosomeHeadLength++) {
-	
+
 				String suffix = "";
 				if (startConfig == 0) {
 					suffix = "_solution";
@@ -109,20 +113,20 @@ public class EvolveBehavior {
 				} else {
 					throw new IllegalArgumentException(startConfig + " is not a valid start configuration");
 				}
-	
+
 				try (BufferedWriter bw = new BufferedWriter(new FileWriter(
 						Paths.get("benchmarks", "lecturemap", "benchresult" + chromosomeHeadLength + suffix + ".tsv")
 								.toFile()))) {
-	
+
 					bw.write("num_gen\tmax_gen\tbest_fitness\tlen_chromosome");
 					bw.newLine();
-					
+
 					long totalTime = 0;
-	
+
 					for (int i = 0; i < NUM_ITERATRIONS_FOR_BENCHMARK; i++) {
-	
+
 						long startTime = System.currentTimeMillis();
-						
+
 						GepResult<Boolean> r = null;
 						if (startConfig == 0) {
 							r = startWithSolution();
@@ -135,22 +139,22 @@ public class EvolveBehavior {
 						} else {
 							throw new IllegalArgumentException(startConfig + " is not a valid start configuration");
 						}
-						
+
 						totalTime += System.currentTimeMillis() - startTime;
-	
+
 						bw.write(r.numGenerations + "\t" + r.maxGenrations + "\t" + r.getFitnessOfBestIndivudal() + "\t"
 								+ chromosomeHeadLength);
 						bw.newLine();
-	
+
 						if (r.getFitnessOfBestIndivudal() > bestFitness) {
 							r.bestIndividual.writeToFile(Paths.get("./bestIndividual.ser"));
 							bestFitness = r.getFitnessOfBestIndivudal();
 						}
-	
+
 					}
-					
+
 					System.out.println("avg Time per run = " + totalTime / NUM_ITERATRIONS_FOR_BENCHMARK + "ms");
-	
+
 				} catch (IOException e) {
 					// Auto-generated catch block
 					e.printStackTrace();

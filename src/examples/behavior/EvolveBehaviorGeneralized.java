@@ -59,13 +59,22 @@ import gep.random.DefaultRandomEngine;
 import gep.selection.RouletteWheelSelectionWithElitePreservation;
 import gep.selection.SelectionMethod;
 
+/**
+ * This class evolves simplified behavior trees to solve all maps in
+ * {@linkplain examples.behavior.maps}.
+ *
+ * TODO clean up benchmarks by more convenient parameterization and inheritance.
+ * 
+ * @author Johannes Wortmann
+ *
+ */
 public class EvolveBehaviorGeneralized {
 
-	public static final int NUM_INDIVIDUALS = 2000;//50;
+	public static final int NUM_INDIVIDUALS = 2000;// 50;
 	public static final int MAX_NUM_GENERATIONS = 4000;
 	public static boolean USE_CLASSIC_FITNESS_FUNCTION = true;
 
-	public static final int START_CONFIGURATION = 2;
+	public static final int[] START_CONFIGURATIONS = { 2 };
 
 	// start total chromosome heads length (inclusive)
 	public static final int MIN_CHROMOSOME_HEAD_LENGTH = 44;
@@ -75,65 +84,72 @@ public class EvolveBehaviorGeneralized {
 	public static int chromosomeHeadLength = 12;
 
 	public static final int NUM_ITERATRIONS_FOR_BENCHMARK = 1;
-	
-	public static final int NUM_FOOD = 183;//135;
-	
+
+	public static final int NUM_FOOD = 183;// 135;
+
 	public static final String SUB_DIR = "all_maps";
 
 	public static final BehaviorFitnessFunction FITNESSFUNCTION_PER_MAP = USE_CLASSIC_FITNESS_FUNCTION
 			? new ClassicFitnessFunction() : new AlternativeFitnessFunction();
 
 	public static void main(String[] args) {
-		
+
 		double bestFitness = -1.0;
 
-		for (chromosomeHeadLength = MIN_CHROMOSOME_HEAD_LENGTH; chromosomeHeadLength <= MAX_CHROMOSOME_HEAD_LENGTH; chromosomeHeadLength++) {
+		for (int startConfig : START_CONFIGURATIONS) {
 
-			String suffix = "";
-			if (START_CONFIGURATION == 0) {
-				suffix = "_solution";
-			} else if (START_CONFIGURATION == 1) {
-				suffix = "_singleChrom";
-			} else if (START_CONFIGURATION == 2) {
-				suffix = "_twoGeneChromSpecNormal";
-			} else if (START_CONFIGURATION == 3) {
-				suffix = "_twoGeneChromSpec";
-			}
+			for (chromosomeHeadLength = MIN_CHROMOSOME_HEAD_LENGTH; chromosomeHeadLength <= MAX_CHROMOSOME_HEAD_LENGTH; chromosomeHeadLength++) {
 
-			try (BufferedWriter bw = new BufferedWriter(new FileWriter(
-					Paths.get("benchmarks", SUB_DIR, "benchresult" + chromosomeHeadLength + suffix + ".tsv").toFile()))) {
-
-				bw.write("num_gen\tmax_gen\tbest_fitness\tlen_chromosome");
-				bw.newLine();
-
-				for (int i = 0; i < NUM_ITERATRIONS_FOR_BENCHMARK; i++) {
-
-					GepResult<Boolean> r = null;
-					if (START_CONFIGURATION == 1) {
-						r = startGeneConfiguration1();
-					} else if (START_CONFIGURATION == 2) {
-						r = startGeneConfiguration2();
-					} else if (START_CONFIGURATION == 3) {
-						r = startGeneConfiguration3();
-					}
-
-					bw.write(r.numGenerations + "\t" + r.maxGenrations + "\t" + r.getFitnessOfBestIndivudal() + "\t"
-							+ chromosomeHeadLength);
-					bw.newLine();
-					
-					if(r.getFitnessOfBestIndivudal() > bestFitness) {
-						r.bestIndividual.writeToFile(Paths.get("./bestIndividual.ser"));
-						bestFitness = r.getFitnessOfBestIndivudal();
-					}
-
+				String suffix = "";
+				if (startConfig == 0) {
+					suffix = "_solution";
+				} else if (startConfig == 1) {
+					suffix = "_singleChrom";
+				} else if (startConfig == 2) {
+					suffix = "_twoGeneChromSpecNormal";
+				} else if (startConfig == 3) {
+					suffix = "_twoGeneChromSpec";
+				} else {
+					throw new IllegalArgumentException(startConfig + " is not a valid start configuration");
 				}
 
-			} catch (IOException e) {
-				// Auto-generated catch block
-				e.printStackTrace();
+				try (BufferedWriter bw = new BufferedWriter(new FileWriter(
+						Paths.get("benchmarks", SUB_DIR, "benchresult" + chromosomeHeadLength + suffix + ".tsv")
+								.toFile()))) {
+
+					bw.write("num_gen\tmax_gen\tbest_fitness\tlen_chromosome");
+					bw.newLine();
+
+					for (int i = 0; i < NUM_ITERATRIONS_FOR_BENCHMARK; i++) {
+
+						GepResult<Boolean> r = null;
+						if (startConfig == 1) {
+							r = startGeneConfiguration1();
+						} else if (startConfig == 2) {
+							r = startGeneConfiguration2();
+						} else if (startConfig == 3) {
+							r = startGeneConfiguration3();
+						} else {
+							throw new IllegalArgumentException(startConfig + " is not a valid start configuration");
+						}
+
+						bw.write(r.numGenerations + "\t" + r.maxGenrations + "\t" + r.getFitnessOfBestIndivudal() + "\t"
+								+ chromosomeHeadLength);
+						bw.newLine();
+
+						if (r.getFitnessOfBestIndivudal() > bestFitness) {
+							r.bestIndividual.writeToFile(Paths.get("./bestIndividual.ser"));
+							bestFitness = r.getFitnessOfBestIndivudal();
+						}
+
+					}
+
+				} catch (IOException e) {
+					// Auto-generated catch block
+					e.printStackTrace();
+				}
 			}
 		}
-
 	}
 
 	private static GepResult<Boolean> startGeneConfiguration1() {
@@ -157,8 +173,8 @@ public class EvolveBehaviorGeneralized {
 		potentialTerminals.add(new PheroInFrontCheckTerminal(env));
 
 		ChromosomalArchitecture<Boolean> chromosomeFactory = new ChromosomalArchitecture<>();
-		int basicGeneId = chromosomeFactory
-				.addGene(new GeneArchitecture<Boolean>(chromosomeHeadLength, supportedBehaviorTreeNodes, potentialTerminals));
+		int basicGeneId = chromosomeFactory.addGene(
+				new GeneArchitecture<Boolean>(chromosomeHeadLength, supportedBehaviorTreeNodes, potentialTerminals));
 		chromosomeFactory.setChromosomeRootToGene(basicGeneId);
 
 		Individual<Boolean>[] population = IndividualArchitecture.createSingleChromosomalArchitecture(chromosomeFactory)
@@ -174,10 +190,8 @@ public class EvolveBehaviorGeneralized {
 		SelectionMethod sm = new RouletteWheelSelectionWithElitePreservation(0.05);
 
 		return GeneExpressionProgramming.run(population, env, sm, re, MAX_NUM_GENERATIONS, NUM_FOOD);
-		// GeneExpressionProgramming.run(population, env, sm, re,
-		// MAX_NUM_GENERATIONS, Double.MAX_VALUE);
 	}
-	
+
 	private static GepResult<Boolean> startGeneConfiguration2() {
 
 		ArrayList<WorldMap> maps = createMaps();
@@ -205,17 +219,16 @@ public class EvolveBehaviorGeneralized {
 		potentialTerminals.add(new SetMemoryTerminal(env, false));
 
 		ChromosomalArchitecture<Boolean> chromosomeFactory = new ChromosomalArchitecture<>();
-		int basicGeneId1 = chromosomeFactory
-				.addGene(new GeneArchitecture<Boolean>(Math.floorDiv(chromosomeHeadLength, 4), supportedBehaviorTreeNodes, potentialTerminals));
-		int basicGeneId2 = chromosomeFactory
-				.addGene(new GeneArchitecture<Boolean>(Math.floorDiv(chromosomeHeadLength, 4), supportedBehaviorTreeNodes, potentialTerminals));
-
+		int basicGeneId1 = chromosomeFactory.addGene(new GeneArchitecture<Boolean>(
+				Math.floorDiv(chromosomeHeadLength, 4), supportedBehaviorTreeNodes, potentialTerminals));
+		int basicGeneId2 = chromosomeFactory.addGene(new GeneArchitecture<Boolean>(
+				Math.floorDiv(chromosomeHeadLength, 4), supportedBehaviorTreeNodes, potentialTerminals));
 
 		// create homoeotic turn-controlling gene
-		ArrayList<GeneTerminal<Boolean>> potentialHomoeoticGeneTerminals = new ArrayList<GeneTerminal<Boolean>>(potentialTerminals);
+		ArrayList<GeneTerminal<Boolean>> potentialHomoeoticGeneTerminals = new ArrayList<GeneTerminal<Boolean>>(
+				potentialTerminals);
 		potentialHomoeoticGeneTerminals.add(new HomoeoticGeneElement<>(basicGeneId1));
 		potentialHomoeoticGeneTerminals.add(new HomoeoticGeneElement<>(basicGeneId2));
-		
 
 		int homoeoticGeneId = chromosomeFactory
 				.addGene(new GeneArchitecture<>((int) Math.ceil(chromosomeHeadLength * 2.0 / 4.0),
@@ -236,8 +249,6 @@ public class EvolveBehaviorGeneralized {
 		SelectionMethod sm = new RouletteWheelSelectionWithElitePreservation(0.05);
 
 		return GeneExpressionProgramming.run(population, env, sm, re, MAX_NUM_GENERATIONS, NUM_FOOD);
-		// GeneExpressionProgramming.run(population, env, sm, re,
-		// MAX_NUM_GENERATIONS, Double.MAX_VALUE);
 	}
 
 	private static GepResult<Boolean> startGeneConfiguration3() {
@@ -261,8 +272,8 @@ public class EvolveBehaviorGeneralized {
 		potentialStepTerminals.add(new CheckMemoryTerminal(env));
 
 		ChromosomalArchitecture<Boolean> chromosomeFactory = new ChromosomalArchitecture<>();
-		int basicGeneId = chromosomeFactory
-				.addGene(new GeneArchitecture<Boolean>(Math.floorDiv(chromosomeHeadLength, 3), supportedBehaviorTreeNodes, potentialStepTerminals));
+		int basicGeneId = chromosomeFactory.addGene(new GeneArchitecture<Boolean>(
+				Math.floorDiv(chromosomeHeadLength, 3), supportedBehaviorTreeNodes, potentialStepTerminals));
 
 		// create homoeotic turn-controlling gene
 		ArrayList<GeneTerminal<Boolean>> potentialHomoeoticGeneTerminals = new ArrayList<GeneTerminal<Boolean>>(7);
@@ -294,8 +305,6 @@ public class EvolveBehaviorGeneralized {
 		SelectionMethod sm = new RouletteWheelSelectionWithElitePreservation(0.05);
 
 		return GeneExpressionProgramming.run(population, env, sm, re, MAX_NUM_GENERATIONS, NUM_FOOD);
-		// GeneExpressionProgramming.run(population, env, sm, re,
-		// MAX_NUM_GENERATIONS, Double.MAX_VALUE);
 	}
 
 	private static ArrayList<WorldMap> createMaps() {
@@ -307,7 +316,6 @@ public class EvolveBehaviorGeneralized {
 			maps.add(new WorldMap(Paths.get("src/examples/behavior/maps/maze1.txt")));
 			maps.add(new WorldMap(Paths.get("src/examples/behavior/maps/maze1.txt")));
 			maps.add(new WorldMap(Paths.get("src/examples/behavior/maps/maze1.txt")));
-		//	maps.add(new WorldMap(Paths.get("src/examples/behavior/maps/maze1.txt")));
 		} catch (IOException e) {
 			e.printStackTrace();
 			return null;

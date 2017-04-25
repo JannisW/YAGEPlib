@@ -73,7 +73,7 @@ public class BehaviorVisualizer extends EvaluationEnvironment {
 
 	public static void main(String[] args) {
 		
-		Path individualPath;
+		Path individualPath = null;
 		Path worldPath = Paths.get("src/examples/behavior/maps/branchmap.txt");
 		if(args.length > 0) {
 			// first argument is path to serialized individual
@@ -84,10 +84,13 @@ public class BehaviorVisualizer extends EvaluationEnvironment {
 			worldPath = Paths.get(args[1]);
 		}
 
-		individualPath = Paths.get("./map1_fit22_gen10.ser"); // gets stuck at first phero
-		// individualPath = Paths.get("./map1_fit29_gen30.ser"); // almost random?
-		// individualPath = Paths.get("./map1_fit57_gen60.ser"); // gets stuck at phero after branch
-		// individualPath = Paths.get("./map1_fit67_gen100.ser"); // optimal
+		if (individualPath == null) {
+			// load a stored one as backup
+			// individualPath = Paths.get("./map1_fit22_gen10.ser"); // gets stuck at first phero
+			// individualPath = Paths.get("./map1_fit29_gen30.ser"); // almost random?
+			// individualPath = Paths.get("./map1_fit57_gen60.ser"); // gets stuck at phero after branch
+			individualPath = Paths.get("./map1_fit67_gen100.ser"); // optimal
+		}
 
 		Individual<Boolean> i = null;
 		WorldMap w = null;

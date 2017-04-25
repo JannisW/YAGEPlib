@@ -34,7 +34,6 @@ import examples.behavior.terminals.FoodInFrontCheckTerminal;
 import examples.behavior.terminals.MarkFieldTerminal;
 import examples.behavior.terminals.MarkerInFrontCheckTerminal;
 import examples.behavior.terminals.PheroInFrontCheckTerminal;
-import examples.behavior.terminals.SetMemoryTerminal;
 import examples.behavior.terminals.StepTerminal;
 import examples.behavior.terminals.TurnLeftTerminal;
 import examples.behavior.terminals.TurnRightTerminal;
@@ -59,13 +58,24 @@ import gep.random.DefaultRandomEngine;
 import gep.selection.RouletteWheelSelectionWithElitePreservation;
 import gep.selection.SelectionMethod;
 
+/**
+ * This class evolves simplified behavior trees to solve the extended ant
+ * tracker task (branchmap.txt) or the maze task (maze1.txt). To toggle the map
+ * use the constant {@linkplain USE_MAZE_MAP}. Details can also be found in the
+ * private method {@linkplain EvolveBehaviorExtended#createMaps()}
+ * 
+ * TODO clean up benchmarks by more convenient parameterization and inheritance.
+ * 
+ * @author Johannes Wortmann
+ *
+ */
 public class EvolveBehaviorExtended {
 
 	public static final int NUM_INDIVIDUALS = 50;
 	public static final int MAX_NUM_GENERATIONS = 100;
 	public static boolean USE_CLASSIC_FITNESS_FUNCTION = true;
 
-	public static final int START_CONFIGURATION = 3;
+	public static final int[] START_CONFIGURATIONS = { 3 };
 
 	// start total chromosome heads length (inclusive)
 	public static final int MIN_CHROMOSOME_HEAD_LENGTH = 12;
@@ -74,62 +84,70 @@ public class EvolveBehaviorExtended {
 	// the total length of the chromosome heads (sum of all gene head lengths)
 	public static int chromosomeHeadLength = 12;
 
-	public static final int NUM_ITERATRIONS_FOR_BENCHMARK = 1;
-	
-	public static final int NUM_FOOD = 67;//135;
-	
-	public static final String SUB_DIR = "lecture_branch_map";
+	public static boolean USE_MAZE_MAP = false;
+
+	public static final int NUM_ITERATRIONS_FOR_BENCHMARK = 1000;
+
+	public static final int NUM_FOOD = USE_MAZE_MAP ? 24 : 67;
+
+	public static final String SUB_DIR = USE_MAZE_MAP ? "maze_map" : "lecture_branch_map";
 
 	public static final BehaviorFitnessFunction FITNESSFUNCTION_PER_MAP = USE_CLASSIC_FITNESS_FUNCTION
 			? new ClassicFitnessFunction() : new AlternativeFitnessFunction();
 
 	public static void main(String[] args) {
 
-		for (chromosomeHeadLength = MIN_CHROMOSOME_HEAD_LENGTH; chromosomeHeadLength <= MAX_CHROMOSOME_HEAD_LENGTH; chromosomeHeadLength++) {
+		for (int startConfig : START_CONFIGURATIONS) {
 
-			String suffix = "";
-			if (START_CONFIGURATION == 0) {
-				suffix = "_solution";
-			} else if (START_CONFIGURATION == 1) {
-				suffix = "_singleChrom";
-			} else if (START_CONFIGURATION == 2) {
-				suffix = "_twoGeneChromSpecNormal";
-			} else if (START_CONFIGURATION == 3) {
-				suffix = "_twoGeneChromSpec";
-			}
+			for (chromosomeHeadLength = MIN_CHROMOSOME_HEAD_LENGTH; chromosomeHeadLength <= MAX_CHROMOSOME_HEAD_LENGTH; chromosomeHeadLength++) {
 
-			try (BufferedWriter bw = new BufferedWriter(new FileWriter(
-					Paths.get("benchmarks", SUB_DIR, "benchresult" + chromosomeHeadLength + suffix + ".tsv").toFile()))) {
-
-				bw.write("num_gen\tmax_gen\tbest_fitness\tlen_chromosome");
-				bw.newLine();
-
-				for (int i = 0; i < NUM_ITERATRIONS_FOR_BENCHMARK; i++) {
-
-					GepResult<Boolean> r = null;
-					if (START_CONFIGURATION == 1) {
-						r = startGeneConfiguration1();
-					} else if (START_CONFIGURATION == 2) {
-						r = startGeneConfiguration2();
-					} else if (START_CONFIGURATION == 3) {
-						r = startGeneConfiguration3();
-					}
-
-					bw.write(r.numGenerations + "\t" + r.maxGenrations + "\t" + r.getFitnessOfBestIndivudal() + "\t"
-							+ chromosomeHeadLength);
-					bw.newLine();
-
+				String suffix = "";
+				if (startConfig == 0) {
+					suffix = "_solution";
+				} else if (startConfig == 1) {
+					suffix = "_singleChrom";
+				} else if (startConfig == 2) {
+					suffix = "_twoGeneChromSpecNormal";
+				} else if (startConfig == 3) {
+					suffix = "_twoGeneChromSpec";
+				} else {
+					throw new IllegalArgumentException(startConfig + " is not a valid start configuration");
 				}
 
-			} catch (IOException e) {
-				// Auto-generated catch block
-				e.printStackTrace();
+				try (BufferedWriter bw = new BufferedWriter(new FileWriter(
+						Paths.get("benchmarks", SUB_DIR, "benchresult" + chromosomeHeadLength + suffix + ".tsv")
+								.toFile()))) {
+
+					bw.write("num_gen\tmax_gen\tbest_fitness\tlen_chromosome");
+					bw.newLine();
+
+					for (int i = 0; i < NUM_ITERATRIONS_FOR_BENCHMARK; i++) {
+
+						GepResult<Boolean> r = null;
+						if (startConfig == 1) {
+							r = startGeneConfiguration1();
+						} else if (startConfig == 2) {
+							r = startGeneConfiguration2();
+						} else if (startConfig == 3) {
+							r = startGeneConfiguration3();
+						} else {
+							throw new IllegalArgumentException(startConfig + " is not a valid start configuration");
+						}
+
+						bw.write(r.numGenerations + "\t" + r.maxGenrations + "\t" + r.getFitnessOfBestIndivudal() + "\t"
+								+ chromosomeHeadLength);
+						bw.newLine();
+
+					}
+
+				} catch (IOException e) {
+					// Auto-generated catch block
+					e.printStackTrace();
+				}
 			}
 		}
-
 	}
 
-	// TODO maybe move to a different class with a new main function
 	private static GepResult<Boolean> startGeneConfiguration1() {
 
 		ArrayList<WorldMap> maps = createMaps();
@@ -140,7 +158,6 @@ public class EvolveBehaviorExtended {
 		supportedBehaviorTreeNodes.add(new SelectorFunction());
 		supportedBehaviorTreeNodes.add(new SequenceFunction());
 		supportedBehaviorTreeNodes.add(new InversionFunction());
-		// TODO support more nodes (including random)
 
 		ArrayList<GeneTerminal<Boolean>> potentialTerminals = new ArrayList<GeneTerminal<Boolean>>(7);
 		potentialTerminals.add(new StepTerminal(env));
@@ -152,8 +169,8 @@ public class EvolveBehaviorExtended {
 		potentialTerminals.add(new PheroInFrontCheckTerminal(env));
 
 		ChromosomalArchitecture<Boolean> chromosomeFactory = new ChromosomalArchitecture<>();
-		int basicGeneId = chromosomeFactory
-				.addGene(new GeneArchitecture<Boolean>(chromosomeHeadLength, supportedBehaviorTreeNodes, potentialTerminals));
+		int basicGeneId = chromosomeFactory.addGene(
+				new GeneArchitecture<Boolean>(chromosomeHeadLength, supportedBehaviorTreeNodes, potentialTerminals));
 		chromosomeFactory.setChromosomeRootToGene(basicGeneId);
 
 		Individual<Boolean>[] population = IndividualArchitecture.createSingleChromosomalArchitecture(chromosomeFactory)
@@ -169,10 +186,8 @@ public class EvolveBehaviorExtended {
 		SelectionMethod sm = new RouletteWheelSelectionWithElitePreservation(0.05);
 
 		return GeneExpressionProgramming.run(population, env, sm, re, MAX_NUM_GENERATIONS, NUM_FOOD);
-		// GeneExpressionProgramming.run(population, env, sm, re,
-		// MAX_NUM_GENERATIONS, Double.MAX_VALUE);
 	}
-	
+
 	private static GepResult<Boolean> startGeneConfiguration2() {
 
 		ArrayList<WorldMap> maps = createMaps();
@@ -182,7 +197,6 @@ public class EvolveBehaviorExtended {
 		supportedBehaviorTreeNodes.add(new SelectorFunction());
 		supportedBehaviorTreeNodes.add(new SequenceFunction());
 		supportedBehaviorTreeNodes.add(new InversionFunction());
-		// TODO support more nodes (including random)
 
 		// create step controlling gene
 		ArrayList<GeneTerminal<Boolean>> potentialTerminals = new ArrayList<GeneTerminal<Boolean>>(7);
@@ -198,11 +212,12 @@ public class EvolveBehaviorExtended {
 		potentialTerminals.add(new MarkFieldTerminal(env, false));
 
 		ChromosomalArchitecture<Boolean> chromosomeFactory = new ChromosomalArchitecture<>();
-		int basicGeneId = chromosomeFactory
-				.addGene(new GeneArchitecture<Boolean>(Math.floorDiv(chromosomeHeadLength, 3), supportedBehaviorTreeNodes, potentialTerminals));
+		int basicGeneId = chromosomeFactory.addGene(new GeneArchitecture<Boolean>(
+				Math.floorDiv(chromosomeHeadLength, 3), supportedBehaviorTreeNodes, potentialTerminals));
 
 		// create homoeotic turn-controlling gene
-		ArrayList<GeneTerminal<Boolean>> potentialHomoeoticGeneTerminals = new ArrayList<GeneTerminal<Boolean>>(potentialTerminals);
+		ArrayList<GeneTerminal<Boolean>> potentialHomoeoticGeneTerminals = new ArrayList<GeneTerminal<Boolean>>(
+				potentialTerminals);
 		potentialHomoeoticGeneTerminals.add(new HomoeoticGeneElement<>(basicGeneId));
 
 		int homoeoticGeneId = chromosomeFactory
@@ -224,8 +239,6 @@ public class EvolveBehaviorExtended {
 		SelectionMethod sm = new RouletteWheelSelectionWithElitePreservation(0.05);
 
 		return GeneExpressionProgramming.run(population, env, sm, re, MAX_NUM_GENERATIONS, NUM_FOOD);
-		// GeneExpressionProgramming.run(population, env, sm, re,
-		// MAX_NUM_GENERATIONS, Double.MAX_VALUE);
 	}
 
 	private static GepResult<Boolean> startGeneConfiguration3() {
@@ -237,7 +250,6 @@ public class EvolveBehaviorExtended {
 		supportedBehaviorTreeNodes.add(new SelectorFunction());
 		supportedBehaviorTreeNodes.add(new SequenceFunction());
 		supportedBehaviorTreeNodes.add(new InversionFunction());
-		// TODO support more nodes (including random)
 
 		// create step controlling gene
 		ArrayList<GeneTerminal<Boolean>> potentialStepTerminals = new ArrayList<GeneTerminal<Boolean>>(7);
@@ -247,12 +259,12 @@ public class EvolveBehaviorExtended {
 		potentialStepTerminals.add(new EmptyInFrontCheckTerminal(env));
 		potentialStepTerminals.add(new PheroInFrontCheckTerminal(env));
 		potentialStepTerminals.add(new MarkerInFrontCheckTerminal(env));
-		
+
 		potentialStepTerminals.add(new CheckMemoryTerminal(env));
 
 		ChromosomalArchitecture<Boolean> chromosomeFactory = new ChromosomalArchitecture<>();
-		int basicGeneId = chromosomeFactory
-				.addGene(new GeneArchitecture<Boolean>(Math.floorDiv(chromosomeHeadLength, 3), supportedBehaviorTreeNodes, potentialStepTerminals));
+		int basicGeneId = chromosomeFactory.addGene(new GeneArchitecture<Boolean>(
+				Math.floorDiv(chromosomeHeadLength, 3), supportedBehaviorTreeNodes, potentialStepTerminals));
 
 		// create homoeotic turn-controlling gene
 		ArrayList<GeneTerminal<Boolean>> potentialHomoeoticGeneTerminals = new ArrayList<GeneTerminal<Boolean>>(7);
@@ -261,10 +273,6 @@ public class EvolveBehaviorExtended {
 		potentialHomoeoticGeneTerminals.add(new HomoeoticGeneElement<>(basicGeneId));
 		potentialHomoeoticGeneTerminals.add(new MarkFieldTerminal(env, true));
 		potentialHomoeoticGeneTerminals.add(new MarkFieldTerminal(env, false));
-		
-	//	potentialHomoeoticGeneTerminals.add(new CheckMemoryTerminal(env));
-	//	potentialHomoeoticGeneTerminals.add(new SetMemoryTerminal(env, true));
-	//	potentialHomoeoticGeneTerminals.add(new SetMemoryTerminal(env, false));
 
 		int homoeoticGeneId = chromosomeFactory
 				.addGene(new GeneArchitecture<>((int) Math.ceil(chromosomeHeadLength * 2.0 / 3.0),
@@ -285,17 +293,17 @@ public class EvolveBehaviorExtended {
 		SelectionMethod sm = new RouletteWheelSelectionWithElitePreservation(0.05);
 
 		return GeneExpressionProgramming.run(population, env, sm, re, MAX_NUM_GENERATIONS, NUM_FOOD);
-		// GeneExpressionProgramming.run(population, env, sm, re,
-		// MAX_NUM_GENERATIONS, Double.MAX_VALUE);
 	}
 
 	private static ArrayList<WorldMap> createMaps() {
 		ArrayList<WorldMap> maps = new ArrayList<WorldMap>();
 		System.out.print("Create maps...");
 		try {
-//			maps.add(new WorldMap(Paths.get("src/examples/behavior/maps/lecturemap.txt")));
-			maps.add(new WorldMap(Paths.get("src/examples/behavior/maps/branchmap.txt")));
-//			maps.add(new WorldMap(Paths.get("src/examples/behavior/maps/maze1.txt")));
+			if (USE_MAZE_MAP) {
+				maps.add(new WorldMap(Paths.get("src/examples/behavior/maps/maze1.txt")));
+			} else {
+				maps.add(new WorldMap(Paths.get("src/examples/behavior/maps/branchmap.txt")));
+			}
 		} catch (IOException e) {
 			e.printStackTrace();
 			return null;
