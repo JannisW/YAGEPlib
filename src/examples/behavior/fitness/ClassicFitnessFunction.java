@@ -15,13 +15,21 @@
  */
 package examples.behavior.fitness;
 
+/**
+ * This class represents the classic fitness function in which the fitness is
+ * just determined by the amount of food an individual is able to consume (more
+ * is better)
+ * 
+ * @author Johannes Wortmann
+ *
+ */
 public class ClassicFitnessFunction extends BehaviorFitnessFunction {
-	
+
 	@Override
 	public void applyNoMovementPenalty() {
 		// do nothing
 	}
-	
+
 	@Override
 	public void resetFitnessScorePerMap() {
 		this.currentFitnessScore = 0.0;
@@ -35,7 +43,7 @@ public class ClassicFitnessFunction extends BehaviorFitnessFunction {
 	@Override
 	public void applyFoodConsumedBonus() {
 		this.currentFitnessScore += 1.0;
-		
+
 	}
 
 	@Override

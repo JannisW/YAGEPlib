@@ -20,12 +20,36 @@ import java.util.List;
 import gep.model.ExpressionTreeNode;
 import gep.model.GeneFunction;
 
+/**
+ * This class represents a sequence node of a behavior tree. It will execute its
+ * children until the first one returned failure (the selector returns failure)
+ * or every child has been executed once (the selector returns success).
+ * 
+ * @author Johannes Wortmann
+ *
+ */
 public class SequenceFunction extends GeneFunction<Boolean> {
 
+	/**
+	 * The version id used for serialization.
+	 */
+	private static final long serialVersionUID = -6934736714447319220L;
+
+	/**
+	 * Creates a new instance of a sequence node in a behavior tree with two
+	 * children.
+	 */
 	public SequenceFunction() {
 		this(2);
 	}
 
+	/**
+	 * Creates a new instance of a sequence node in a behavior tree with the
+	 * given number of children.
+	 * 
+	 * @param numberOfArguments
+	 *            The number of children of the selector
+	 */
 	public SequenceFunction(int numberOfArguments) {
 		super("Sequence node", "S", numberOfArguments);
 	}

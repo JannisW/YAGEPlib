@@ -60,35 +60,52 @@ import gep.model.Individual;
  * evolve behavior example.
  * 
  * This class extends EvaluationEnvironment just to be able to execute terminals
- * that depend on the evaluation environment. (TODO  find a nicer solution)
+ * that depend on the evaluation environment. (TODO find a nicer solution)
  * 
  * Design based on:
  * https://docs.oracle.com/javase/tutorial/uiswing/examples/layout/BorderLayoutDemoProject/src/layout/BorderLayoutDemo.java
  * 
  * @author Johannes Wortmann
  * 
- * TODO graphics are quite slow and include artifacts.
+ *         TODO graphics are quite slow and include artifacts.
  */
 public class BehaviorVisualizer extends EvaluationEnvironment {
 
+	/**
+	 * Visualizes the behavior of a evolved individual.
+	 *
+	 * <p>
+	 * You can call the program in the following way:</br>
+	 * program </br>
+	 * program [individual.ser] </br>
+	 * program [individual.ser] [map.txt]
+	 * </p>
+	 * 
+	 * @param args
+	 *            The program arguments (first individual, second map; both
+	 *            optional)
+	 */
 	public static void main(String[] args) {
-		
+
 		Path individualPath = null;
 		Path worldPath = Paths.get("src/examples/behavior/maps/branchmap.txt");
-		if(args.length > 0) {
+		if (args.length > 0) {
 			// first argument is path to serialized individual
 			individualPath = Paths.get(args[0]);
 		}
-		if(args.length > 1) {
+		if (args.length > 1) {
 			// second argument is path to map (if set)
 			worldPath = Paths.get(args[1]);
 		}
 
 		if (individualPath == null) {
 			// load a stored one as backup
-			// individualPath = Paths.get("./map1_fit22_gen10.ser"); // gets stuck at first phero
-			// individualPath = Paths.get("./map1_fit29_gen30.ser"); // almost random?
-			// individualPath = Paths.get("./map1_fit57_gen60.ser"); // gets stuck at phero after branch
+			// individualPath = Paths.get("./map1_fit22_gen10.ser"); // gets
+			// stuck at first phero
+			// individualPath = Paths.get("./map1_fit29_gen30.ser"); // almost
+			// random?
+			// individualPath = Paths.get("./map1_fit57_gen60.ser"); // gets
+			// stuck at phero after branch
 			individualPath = Paths.get("./map1_fit67_gen100.ser"); // optimal
 		}
 

@@ -15,15 +15,26 @@
  */
 package examples.behavior.fitness;
 
+/**
+ * This class represents an alternative to the classic fitness function
+ * {@link ClassicFitnessFunction}. It was not used for final benchmarks but
+ * stays in in the project as an example.
+ * 
+ * @author Johannes Wortmann
+ *
+ */
 public class AlternativeFitnessFunction extends BehaviorFitnessFunction {
-	
+
+	/**
+	 * The initial fitness value of an individual.
+	 */
 	protected final static double START_FITNESS = 100.0;
-	
+
 	@Override
 	public void applyNoMovementPenalty() {
 		currentFitnessScore = 0.0;
 	}
-	
+
 	@Override
 	public void resetFitnessScorePerMap() {
 		this.currentFitnessScore = START_FITNESS;

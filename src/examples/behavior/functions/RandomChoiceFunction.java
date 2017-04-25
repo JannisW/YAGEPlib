@@ -22,19 +22,40 @@ import gep.model.GeneFunction;
 import gep.random.DefaultRandomEngine;
 import gep.random.RandomEngine;
 
+/**
+ * This class represents a random choice node of a behavior tree. It randomly
+ * selects one of its children, executes it and returns its return value.
+ * 
+ * @author Johannes Wortmann
+ *
+ */
 public class RandomChoiceFunction extends GeneFunction<Boolean> {
 
 	/**
-	 * 
+	 * The version id used for serialization.
 	 */
 	private static final long serialVersionUID = 1131663166244611831L;
-	
+
+	/**
+	 * The used random engine.
+	 */
 	private RandomEngine random;
 
+	/**
+	 * Creates a new instance of a random choice node in a behavior tree
+	 * handling a random choice between two subtrees.
+	 */
 	public RandomChoiceFunction() {
 		this(2);
 	}
 
+	/**
+	 * Creates a new instance of a random choice node in a behavior tree
+	 * handling a random choice between the given number of subtrees.
+	 * 
+	 * @param numberOfArguments
+	 *            The number of subtrees this operator should choose from.
+	 */
 	public RandomChoiceFunction(int numberOfArguments) {
 		super("random choice node", "R", numberOfArguments);
 		random = new DefaultRandomEngine();

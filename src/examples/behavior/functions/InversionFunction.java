@@ -20,13 +20,23 @@ import java.util.List;
 import gep.model.ExpressionTreeNode;
 import gep.model.GeneFunction;
 
+/**
+ * This class represents a inversion node of a behavior tree. It executes its
+ * child and returns the inversion of its return value.
+ * 
+ * @author Johannes Wortmann
+ *
+ */
 public class InversionFunction extends GeneFunction<Boolean> {
 
 	/**
-	 * The serial version id.
+	 * The version id used for serialization.
 	 */
 	private static final long serialVersionUID = -7759013993227732330L;
 
+	/**
+	 * Creates a new instance of a inversion node in a behavior tree.
+	 */
 	public InversionFunction() {
 		super("Inversion", "I", 1);
 	}

@@ -20,12 +20,36 @@ import java.util.List;
 import gep.model.ExpressionTreeNode;
 import gep.model.GeneFunction;
 
+/**
+ * This class represents a selector node of a behavior tree. It will execute its
+ * children until the first one returned success (the selector returns success)
+ * or every child has been executed once (the selector returns failure).
+ * 
+ * @author Johannes Wortmann
+ *
+ */
 public class SelectorFunction extends GeneFunction<Boolean> {
-	
+
+	/**
+	 * The version id used for serialization.
+	 */
+	private static final long serialVersionUID = 52397171578116652L;
+
+	/**
+	 * Creates a new instance of a selector node in a behavior tree with two
+	 * children.
+	 */
 	public SelectorFunction() {
 		this(2);
 	}
 
+	/**
+	 * Creates a new instance of a selector node in a behavior tree with the
+	 * given number of children.
+	 * 
+	 * @param numberOfArguments
+	 *            The number of children of the selector
+	 */
 	public SelectorFunction(int numberOfArguments) {
 		super("Selector (fallback) node", "F", numberOfArguments);
 	}

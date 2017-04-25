@@ -27,7 +27,6 @@ import gep.model.Individual;
 public class EvaluationEnvironment extends FitnessEnvironment<Boolean> {
 
 	final protected static int MAX_NUMBER_OF_SIMULATION_TICKS = 400;
-	// final static double START_FITNESS = 100.0;
 
 	public static boolean PRINT_STEPS = false;
 
@@ -37,9 +36,6 @@ public class EvaluationEnvironment extends FitnessEnvironment<Boolean> {
 	
 	// a one bit memory for the agent
 	private boolean agentMemory;
-
-	// TODO maybe change 2d array to 1d array
-	//private Field[][] grid;
 
 	private int foodConsumed = 0;
 	private int movedDistance = 0;
@@ -203,13 +199,7 @@ public class EvaluationEnvironment extends FitnessEnvironment<Boolean> {
 																		// food
 																		// is
 																		// left
-
-				boolean executionResult = currentProgram.execute();
-
-				if (!executionResult) {
-					// return currentFitnessScore-1; // TODO makes sense?
-				}
-
+				currentProgram.execute();
 				numberOfTicks++; // TODO maybe also couple to number of steps
 			}
 
@@ -221,9 +211,6 @@ public class EvaluationEnvironment extends FitnessEnvironment<Boolean> {
 
 			totalFitnessScore += fitnessFunction.getCurrentScore();
 		}
-
-		// System.out.println("SCORE: " + totalFitnessScore + " (food consumed:
-		// " + foodConsumed + ")");
 
 		return this.totalFitnessScore;
 
