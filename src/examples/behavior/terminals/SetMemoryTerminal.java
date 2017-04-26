@@ -17,6 +17,14 @@ package examples.behavior.terminals;
 
 import examples.behavior.fitness.EvaluationEnvironment;
 
+/**
+ * This class represents a terminal that always returns success and either sets
+ * the one bit memory of the agent to true or false. This is decided on
+ * intantioation.
+ * 
+ * @author Johannes Wortmann
+ *
+ */
 public class SetMemoryTerminal extends EnvironmentDependendTerminal<Boolean> {
 
 	/**
@@ -29,16 +37,18 @@ public class SetMemoryTerminal extends EnvironmentDependendTerminal<Boolean> {
 	/**
 	 * Creates a new Terminal that handles the one bit memory of the agent.
 	 * 
-	 * If the parameter memoryState is set to true, this terminal will set the agents memory to 1.
-	 * If the parameters is instead set to false this terminal will set the memory to 0.
+	 * If the parameter memoryState is set to true, this terminal will set the
+	 * agents memory to 1. If the parameters is instead set to false this
+	 * terminal will set the memory to 0.
 	 * 
 	 * @param env
 	 *            The environment in which this terminal is applied.
 	 * @param memoryState
-	 *            true if terminal should set memory to 1, false if it should set it to false
+	 *            true if terminal should set memory to 1, false if it should
+	 *            set it to false
 	 */
 	public SetMemoryTerminal(EvaluationEnvironment env, boolean memoryState) {
-		super("set memory", memoryState? "mem1": "mem0", env);
+		super("set memory", memoryState ? "mem1" : "mem0", env);
 		this.memState = memoryState;
 	}
 

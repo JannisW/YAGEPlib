@@ -18,13 +18,21 @@ package examples.behavior.terminals;
 import examples.behavior.fitness.EvaluationEnvironment;
 import examples.behavior.world.Orientation;
 
+/**
+ * This class represents a terminal that lets the agent changes its orientation
+ * by turning left. It always returns success as there is no option in which an
+ * agent can't be turned.
+ * 
+ * @author Johannes Wortmann
+ *
+ */
 public class TurnLeftTerminal extends EnvironmentDependendTerminal<Boolean> {
-	
+
 	/**
 	 * The version UID used for serialization.
 	 */
 	private static final long serialVersionUID = -3616928667009598670L;
-	
+
 	public TurnLeftTerminal(EvaluationEnvironment env) {
 		super("turn left", "l", env);
 	}
@@ -32,7 +40,8 @@ public class TurnLeftTerminal extends EnvironmentDependendTerminal<Boolean> {
 	@Override
 	public Boolean apply() {
 		final Orientation oldAgentOrientation = env.getAgentOrientation();
-		switch(oldAgentOrientation) { // TODO replace switch-case to modulo add/subtract mechanism  
+		switch (oldAgentOrientation) { // TODO replace switch-case to modulo
+										// add/subtract mechanism
 		case NORTH:
 			env.setAgentOrientation(Orientation.WEST);
 			break;
@@ -48,6 +57,5 @@ public class TurnLeftTerminal extends EnvironmentDependendTerminal<Boolean> {
 		}
 		return true;
 	}
-	
 
 }

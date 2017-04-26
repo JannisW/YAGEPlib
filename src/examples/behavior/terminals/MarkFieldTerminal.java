@@ -17,6 +17,14 @@ package examples.behavior.terminals;
 
 import examples.behavior.fitness.EvaluationEnvironment;
 
+/**
+ * This class represents a terminal that always returns success and places or
+ * removes a mark on its current position on the world map. The mode
+ * (place/remove) is decided on instantiation.
+ * 
+ * @author Johannes Wortmann
+ *
+ */
 public class MarkFieldTerminal extends EnvironmentDependendTerminal<Boolean> {
 
 	/**

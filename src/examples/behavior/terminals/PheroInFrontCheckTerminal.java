@@ -17,6 +17,13 @@ package examples.behavior.terminals;
 
 import examples.behavior.fitness.EvaluationEnvironment;
 
+/**
+ * This class represents a terminal that returns success if the field in front
+ * of the agent contains pheromone, and failure otherwise.
+ * 
+ * @author Johannes Wortmann
+ *
+ */
 public class PheroInFrontCheckTerminal extends EnvironmentDependendTerminal<Boolean> {
 
 	/**

@@ -18,6 +18,14 @@ package examples.behavior.terminals;
 import examples.behavior.fitness.EvaluationEnvironment;
 import examples.behavior.world.Orientation;
 
+/**
+ * This class represents a terminal that lets the agent changes its orientation
+ * by turning right. It always returns success as there is no option in which an
+ * agent can't be turned.
+ * 
+ * @author Johannes Wortmann
+ *
+ */
 public class TurnRightTerminal extends EnvironmentDependendTerminal<Boolean> {
 	
 	/**

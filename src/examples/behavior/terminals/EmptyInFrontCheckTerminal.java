@@ -17,13 +17,20 @@ package examples.behavior.terminals;
 
 import examples.behavior.fitness.EvaluationEnvironment;
 
+/**
+ * This class represents a terminal that returns success if the field in front
+ * of the agent is empty, and failure otherwise.
+ * 
+ * @author Johannes Wortmann
+ *
+ */
 public class EmptyInFrontCheckTerminal extends EnvironmentDependendTerminal<Boolean> {
 
 	/**
 	 * The version UID used for serialization.
 	 */
 	private static final long serialVersionUID = 4339680571901903556L;
-	
+
 	public EmptyInFrontCheckTerminal(EvaluationEnvironment env) {
 		super("empty?", "e", env);
 	}

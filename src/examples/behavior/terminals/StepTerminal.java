@@ -18,13 +18,21 @@ package examples.behavior.terminals;
 import examples.behavior.fitness.EvaluationEnvironment;
 import examples.behavior.world.Orientation;
 
+/**
+ * This class represents a terminal that lets the agent advance for one field in
+ * its current direction. It returns success if the step could be performed and
+ * failure otherwise.
+ * 
+ * @author Johannes Wortmann
+ *
+ */
 public class StepTerminal extends EnvironmentDependendTerminal<Boolean> {
 
 	/**
 	 * The version UID used for serialization.
 	 */
 	private static final long serialVersionUID = -7648448858533698600L;
-	
+
 	public StepTerminal(EvaluationEnvironment env) {
 		super("step", "s", env);
 	}
@@ -32,7 +40,8 @@ public class StepTerminal extends EnvironmentDependendTerminal<Boolean> {
 	@Override
 	public Boolean apply() {
 		final Orientation oldAgentOrientation = env.getAgentOrientation();
-		switch (oldAgentOrientation) { // TODO replace switch-case to modulo add/subtract mechanism
+		switch (oldAgentOrientation) { // TODO replace switch-case to modulo
+										// add/subtract mechanism
 		case NORTH:
 			return env.moveTo(env.getPosAgentX(), env.getPosAgentY() + 1);
 		case EAST:
