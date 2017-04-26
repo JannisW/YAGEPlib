@@ -1,0 +1,11 @@
+
+examples.behavior
+examples.behavior.fitness
+examples.behavior.functions
+examples.behavior.terminals
+examples.behavior.world
+gep
+gep.model
+gep.operators
+gep.random
+gep.selection
