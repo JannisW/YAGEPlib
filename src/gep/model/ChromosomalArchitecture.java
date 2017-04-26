@@ -15,9 +15,7 @@
  */
 package gep.model;
 
-import java.util.ArrayDeque;
 import java.util.ArrayList;
-import java.util.Deque;
 import java.util.List;
 
 import gep.random.RandomEngine;
@@ -97,16 +95,32 @@ public class ChromosomalArchitecture<T> {
 		return addGene(GeneArchitecture.createGeneFromSequence(sequence));
 	}
 
-	public int addGene(Gene<T> g) {
-		if (g.architecture.isModifiable) {
-			genes.add(g);
+	/**
+	 * Adds the given gene to the chromosomes produced by this factory.
+	 * 
+	 * @param gene
+	 *            the gene to be added
+	 * @return The unique geneId that identifies a gene in the chromosomes.
+	 */
+	public int addGene(Gene<T> gene) {
+		if (gene.architecture.isModifiable) {
+			genes.add(gene);
 			return genes.size();
 		} else {
-			immutableGenes.add(g);
+			immutableGenes.add(gene);
 			return -immutableGenes.size();
 		}
 	}
 
+	/**
+	 * Convenient function that adds all given genes to this architecture and
+	 * thus to the chromosomes produced by this factory.
+	 * 
+	 * @param genes
+	 *            The list of genes to be added
+	 * @return A list of gene ids. The order of returned ids matches the order
+	 *         of genes in the given list.
+	 */
 	public List<Integer> addGenes(List<Gene<T>> genes) {
 		ArrayList<Integer> ids = new ArrayList<>(genes.size());
 		for (Gene<T> g : genes) {
@@ -115,14 +129,24 @@ public class ChromosomalArchitecture<T> {
 		return ids;
 	}
 
-	public void setChromosomeRootToStaticLinkingFunction(ExpressionTreeNode<T> staticLinkingFunctionAsRoot) {
-		if (this.rootGene != null) {
-			throw new IllegalStateException("The Chromosomes root is unique and can only be set once!");
-		}
-
-		this.rootGene = toStaticGene(staticLinkingFunctionAsRoot);
-	}
-
+	/**
+	 * <p>
+	 * Adds the given gene to the architecture and sets the root of the
+	 * chromosomes produced by this factory to that given gene. The given gene
+	 * is not to be allowed to be part of the architecture already. Otherwise
+	 * the behavior is undefined.The root is the gene of a chromosome from which
+	 * the evaluation begins.
+	 * </p>
+	 * <p>
+	 * Note: The root can just be set once.
+	 * </p>
+	 * 
+	 * @param rootGene
+	 *            The gene to be set as the root.
+	 * 
+	 * @throws IllegalStateException
+	 *             If the root was already set before.
+	 */
 	public void setChromosomeRootToGene(Gene<T> rootGene) {
 		if (this.rootGene != null) {
 			throw new IllegalStateException("The Chromosomes root is unique and can only be set once!");
@@ -140,13 +164,31 @@ public class ChromosomalArchitecture<T> {
 		}
 	}
 
+	/**
+	 * <p>
+	 * Sets the root of the chromosomes produced by this factory to the gene
+	 * defined by the given geneId. The root is the gene of a chromosome from
+	 * which the evaluation begins.
+	 * </p>
+	 * <p>
+	 * Note: The root can just be set once.
+	 * </p>
+	 * 
+	 * @param rootGene
+	 *            The gene to be set as the root.
+	 * 
+	 * @throws IllegalStateException
+	 *             If the root was already set before.
+	 * @throws IllegalArgumentException
+	 *             If the given geneId is invalid
+	 */
 	public void setChromosomeRootToGene(int geneId) {
 		if (this.rootGene != null) {
 			throw new IllegalStateException("The Chromosomes root is unique and can only be set once!");
 		}
 
 		if (!isValidGeneId(geneId)) {
-			throw new IllegalStateException(
+			throw new IllegalArgumentException(
 					geneId + " Is an invalid geneId (does not exist) in the current state. Add the gene first!");
 		}
 
@@ -157,6 +199,13 @@ public class ChromosomalArchitecture<T> {
 		this.rootGene = arch.createRandomGene();
 	}
 
+	/**
+	 * Checks if the given geneId is valid (does not violate any boundaries)
+	 * 
+	 * @param geneId
+	 *            The gene id to be checked
+	 * @return true if there is a gene related to the given id, false otherwise.
+	 */
 	private boolean isValidGeneId(int geneId) {
 		if (geneId == 0)
 			return rootGene != null;
@@ -168,32 +217,22 @@ public class ChromosomalArchitecture<T> {
 
 	/**
 	 * 
-	 * TODO adjust because not longer usable (expressiontree requires
-	 * chromosome)...
+	 * Adds a static linking function to the architecture. This linking function
+	 * is represented as an unmodifiable gene. Its expression tree defines the
+	 * linking function.
 	 * 
-	 * @param etn
+	 * @param staticLinkingFunction
+	 *            The unmodifiable gene encoding a static linking function.
+	 * 
+	 * @throws IllegalArgumentException
+	 *             if the given gene is modifiable
 	 */
-	public void addStaticLinkingFunction(ExpressionTreeNode<T> etn) {
-		immutableGenes.add(toStaticGene(etn));
-	}
-
-	private static <T> Gene<T> toStaticGene(ExpressionTreeNode<T> etn) {
-
-		ArrayList<GeneElement<T>> sequence = new ArrayList<>();
-
-		// perform a bfs to convert expression tree to gene
-		Deque<ExpressionTreeNode<T>> queue = new ArrayDeque<>();
-		queue.addLast(etn);
-
-		while (!queue.isEmpty()) {
-			ExpressionTreeNode<T> currRoot = queue.removeFirst();
-			sequence.add(currRoot.getNodeElement());
-			for (ExpressionTreeNode<T> child : currRoot.getChildren()) {
-				queue.addLast(child);
-			}
+	public void addStaticLinkingFunction(Gene<T> staticLinkingFunction) {
+		if (staticLinkingFunction.architecture.isModifiable) {
+			throw new IllegalArgumentException(
+					"The given gene has to be immutable to be used as static linking function.");
 		}
-
-		return GeneArchitecture.createGeneFromSequence(sequence, false);
+		immutableGenes.add(staticLinkingFunction);
 	}
 
 	/**

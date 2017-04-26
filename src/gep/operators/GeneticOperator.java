@@ -21,18 +21,31 @@ import gep.model.Individual;
 import gep.random.DefaultRandomEngine;
 import gep.random.RandomEngine;
 
+/**
+ * <p>
+ * This class describes a generic genetic operator. Every new genetic operator
+ * has to inherit from this class.
+ * </p><p>
+ * Most of the basic operators described in Ferreira, C.: Gene Expression
+ * Programming: Mathematical Modeling by an Artificial Intelligence. 2 edn.
+ * Springer-Verlag Berlin Heidelberg (2006) are already implemented
+ * </p>
+ * 
+ * @author Johannes Wortmann
+ *
+ */
 public abstract class GeneticOperator {
 
 	protected double applicationRate;
 
 	protected final RandomEngine random;
 
-	public GeneticOperator(double applicationRate) {
+	protected GeneticOperator(double applicationRate) {
 		this.applicationRate = applicationRate;
 		this.random = new DefaultRandomEngine();
 	}
 
-	public GeneticOperator(double applicationRate, RandomEngine re) {
+	protected GeneticOperator(double applicationRate, RandomEngine re) {
 		this.applicationRate = applicationRate;
 		this.random = re;
 	}

@@ -17,13 +17,19 @@ package examples.behavior.terminals;
 
 import examples.behavior.fitness.EvaluationEnvironment;
 
+/**
+ * This class represents a terminal that returns success if the internal one bit
+ * memory of the agent is set to true, and failure otherwise.
+ * 
+ * @author Johannes Wortmann
+ *
+ */
 public class CheckMemoryTerminal extends EnvironmentDependendTerminal<Boolean> {
-	
+
 	/**
 	 * The version UID used for serialization.
 	 */
 	private static final long serialVersionUID = -5314622750709569326L;
-	
 
 	public CheckMemoryTerminal(EvaluationEnvironment env) {
 		super("memory set?", "mem?", env);

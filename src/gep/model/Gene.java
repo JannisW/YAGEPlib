@@ -41,8 +41,6 @@ public class Gene<T> implements Serializable {
 	final private GeneElement<T>[] sequence; // TODO maybe optimize by using
 												// arrays
 												// of int (index structure)
-	// TODO maybe do explicit separation in head and tail
-
 	/**
 	 * Reference to the meta information of this gene (architecture of the gene)
 	 */
@@ -118,8 +116,8 @@ public class Gene<T> implements Serializable {
 	 * which are in the coding region of the Gene.
 	 * 
 	 * @param chromosome
-	 *            The chromosome that contains this gene (TODO better
-	 *            description??)
+	 *            The chromosome that contains the gene that is expressed by
+	 *            this expression tree.
 	 * 
 	 * @return The ExpressionTree encoded by this Gene in its current
 	 *         configuration.
